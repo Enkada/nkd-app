@@ -1,0 +1,43 @@
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const url = require('url');
+const zlib = require('zlib');
+const { promisify } = require('util');
+
+const server = http.createServer((req, res) => {
+  const parsedUrl = url.parse(req.url);
+  const filePath = path.join(__dirname, parsedUrl.pathname);
+  const fileStream = fs.createReadStream(filePath);
+
+  fileStream.on('error', (err) => {
+    if (err.code === 'ENOENT') {
+      res.statusCode = 404;
+      res.end('File not found');
+    } else {
+      res.statusCode = 500;
+      res.end('Internal server error');
+    }
+  });
+
+  const stat = promisify(fs.stat);
+
+  stat(filePath)
+    .then((fileInfo) => {
+      res.setHeader('Content-Length', fileInfo.size);
+      res.setHeader('Content-Type', 'text/plain');
+      res.setHeader('Content-Encoding', 'gzip');
+      res.statusCode = 200;
+
+      const gzip = zlib.createGzip();
+      fileStream.pipe(gzip).pipe(res);
+    })
+    .catch(() => {
+      res.statusCode = 500;
+      res.end('Internal server error');
+    });
+});
+
+server.listen(8080, () => {
+  console.log('Server is running on port 8080');
+});
