@@ -1,11 +1,12 @@
 import { useRef, useEffect } from 'react'
+import { LocationBackground } from './App';
 
 export const Background = ({
     current, 
     old
 } : {
-    current?:string, 
-    old?:string
+    current?: LocationBackground, 
+    old?: LocationBackground
 }) => {
     const bgRef = useRef<HTMLImageElement>(null);	
 
@@ -20,12 +21,14 @@ export const Background = ({
 				bgRef.current?.classList.add('animated');
 			});
 		}
-	}, [current]);
+	}, [current?.image]);
 
     return (
         <>
-            <img src={`/place/${current}`} className='background background--current' />
-			<img src={`/place/${old}`} ref={bgRef} className='background background--old' />
+            <img src={`/place/${current?.image}`} className='background background--current' />            
+			<div>{current?.items.map((item, index) => <img key={index} className='background-item background-item--current' src={`/place/item/${item}.png`}/>)}</div>
+			<img src={`/place/${old?.image}`} ref={bgRef} className='background background--old' />
+			<div>{old?.items.map((item, index) => <img key={index} className='background-item background-item--old' src={`/place/item/${item}.png`}/>)}</div>
         </>
     )
 }

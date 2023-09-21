@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import Draggable from 'react-draggable'
 import { Browser } from './Browser'
 import { Terminal } from './Terminal'
-import { StatKeys } from '../App'
 
 type File = {
     name: string,
@@ -173,11 +172,9 @@ const Explorer = ({
 }
 
 export const PCScreen = ({
-    handlePCExit,
-    setStat
+    handlePCExit
 }: {
-    handlePCExit: () => void,
-    setStat: (key: StatKeys, value: any, action?: "=" | "=>") => void
+    handlePCExit: () => void
 }) => {
 
     const [apps, setApps] = useState<string[]>([]);
@@ -211,7 +208,7 @@ export const PCScreen = ({
                 </>)}
                 {!!(apps.includes("Browser")) && <Browser setApps={setApps} />}
                 {!!(apps.includes("Explorer")) && <Explorer setApps={setApps} setImg={setImg} setTxt={setTxt} />}
-                {!!(apps.includes("Terminal")) && <Terminal setStat={setStat} setApps={setApps} />}
+                {!!(apps.includes("Terminal")) && <Terminal setApps={setApps} />}
                 {!!img && <ImgViewer img={img} setImg={setImg} />}
                 {!!txt && <TxtViewer txt={txt} setTxt={setTxt} />}
             </div>

@@ -1,4 +1,4 @@
-import { Time } from "./Utils";
+import { t } from "./Utils";
 
 export type Action = {
 	id?: string,
@@ -8,11 +8,13 @@ export type Action = {
 	returnText?: string,
 	returnToStart?: boolean,
 	hideReturn?: boolean,
-	time?: Time,
+	time?: number,
 	text: string[],
 	actions?: string[],
 	isRest?: boolean,
-	cost?: Cost
+	cost?: Cost,
+	location?: string,
+	character?: string | null
 }
 
 export type Cost = {
@@ -21,15 +23,57 @@ export type Cost = {
 }
 
 export const _ACTIONS: Record<string, Action> = {
+	intro_0: {
+		text: [
+			"Welcome to the game. You are about to see Sara.",
+		],
+		actions: ["intro_1"],
+		hideReturn: true
+	},
+	intro_1: {
+		title: "Wait", emoji: "🕐",
+		text: [
+			"Subway stops."
+		],
+		location: "subway",
+		returnText: "Get out"
+	},
+	intro_2: {
+		title: "Let's go home", emoji: "🏠",
+		text: [
+			"You are at home street."
+		],
+		location: "home_street",
+		character: null,
+		actions: ["intro_3"],
+		hideReturn: true
+	},
+	intro_3: {
+		title: "Continue", emoji: "👀",
+		text: [
+			"You are at home stairwell."
+		],
+		location: "stairwell",
+		actions: ["intro_4"],
+		hideReturn: true
+	},
+	intro_4: {
+		title: "Continue", emoji: "👀",
+		text: [
+			"You are at home."
+		],
+		location: "home",
+		returnText: "Nice"
+	},
 	bath: {
-		title: "Take a bath", emoji: "🛁", time: new Time(30),
+		title: "Take a bath", emoji: "🛁", time: t(0, 30),
 		text: [
 			`You've just had a nice bath.`,
 			`It's always good to take a bath once in a while.`
 		]
 	},
 	work: {
-		title: "Work", emoji: "👨‍💻", time: new Time(60),
+		title: "Work", emoji: "👨‍💻", time: t(1, 0),
 		cost: { energy: 10 },
 		text: [
 			'You spend some time to find a job to do.',
@@ -37,7 +81,7 @@ export const _ACTIONS: Record<string, Action> = {
 		]
 	},
 	market_eat: {
-		title: "Buy and eat hotdog", emoji: "🌭", time: new Time(8),
+		title: "Buy and eat hotdog", emoji: "🌭", time: t(0, 8),
 		cost: { money: 5, energy: -10 },
 		text: [
 			'You bought a hotdog and ate it.',
@@ -45,7 +89,7 @@ export const _ACTIONS: Record<string, Action> = {
 		]
 	},
 	sleep: {
-		title: "Sleep", emoji: "💤", time: new Time(7, 0), isRest: true, returnEmoji: '🥱', returnText: 'Wake up',
+		title: "Sleep", emoji: "💤", time: t(7, 0), isRest: true, returnEmoji: '🥱', returnText: 'Wake up',
 		text: [
 			"Let's get some rest. \nYou sleep for 7 hours.",
 			"Time to have some sleep. The bed us comfy. \nYou sleep for 7 hours"

@@ -7,6 +7,15 @@
     }
 }
 
+@keyframes opacity {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 @keyframes characterAnimation {
     0% {
         opacity: 0;

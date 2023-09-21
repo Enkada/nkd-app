@@ -1,17 +1,14 @@
 import React, { useState, useRef } from 'react'
 import Draggable from 'react-draggable'
-import { StatKeys } from '../App'
 
 const getRow = (text: string, user: string | null, index: number = 0) => {
     return <div className='row' key={index}>{!!user && <><span className='user'>{user}</span><span>: </span></>}<span>{text}</span></div>
 }
 
 export const Terminal = ({
-    setApps,
-    setStat
+    setApps
 }: {
-    setApps: React.Dispatch<React.SetStateAction<string[]>>,
-    setStat: (key: StatKeys, value: any, action?: "=" | "=>") => void
+    setApps: React.Dispatch<React.SetStateAction<string[]>>
 }) => {
     const [history, setHistory] = useState<JSX.Element[]>([getRow("Terminal v0", null)])
 
@@ -49,9 +46,6 @@ export const Terminal = ({
                 break;
             case "user":
                 setUser(args[1]);
-                break;
-            case "stat":
-                setStat(args[1] as StatKeys, Number(args[2]));
                 break;
             default:
                 handleAddRow(`Unknown command "${command}"`, null);

@@ -16,11 +16,14 @@
     --clr-border: hsl(0, 0%, 24%);
     --clr-bg: hsl(0, 0%, 18%);
     --clr-highlight: hsl(0, 0%, 10%);
+    
+    --clr-bg-t05: hsla(0, 0%, 0%, 0.5);
 
     --clr-link: hsl(212, 65%, 70%);
 
     --clr-money: hsl(160, 41%, 53%);
     --clr-energy: hsl(43 100% 40%);
+    --clr-food: hsl(128, 48%, 36%);
 
     --clr-bad: rgb(214, 69, 69);
     --clr-good: rgb(67, 179, 73);
@@ -136,15 +139,29 @@ input {
 
     .money {        
         color: var(--clr-money);
-    }
+    }    
 
-    .energy {
+    .progress {
         display: flex;
         align-items: center;
 
         span {
             margin-right: -.75em;
             z-index: 1000;
+        }
+
+        &.energy {
+            progress::-webkit-progress-value {
+                background-color: var(--clr-energy);            
+                box-shadow: 0px 0px 5px rgb(100, 68, 0) inset;
+            }
+        }
+    
+        &.food {
+            progress::-webkit-progress-value {
+                background-color: var(--clr-food);            
+                box-shadow: 0px 0px 5px rgb(100, 48, 12) inset;
+            }
         }
 
         progress {
@@ -158,9 +175,7 @@ input {
             border-radius: 8px;
         }
         progress::-webkit-progress-value {
-            background-color: var(--clr-energy);
             border-radius: 8px;
-            box-shadow: 0px 0px 5px rgb(100, 68, 0) inset;
             transition: width .5s ease;
         }
     }
@@ -187,6 +202,24 @@ input {
         &.animated {
             opacity: 0;
         }
+    }
+}
+
+.background-item {
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(.5);
+    z-index: -500;
+
+    &--current {
+        animation: opacity .3s ease forwards;
+    }
+
+    &--old {
+        animation: backgroundAnimation .3s ease forwards;
     }
 }
 
@@ -232,7 +265,224 @@ input {
     }
 }
 
+.menu {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
 
+    .btn {
+        display: flex;
+        gap: .25em;
+        align-items: center;
+        cursor: pointer;
+        padding: .5em;
+        opacity: .5;
+
+        transition: opacity .3s ease, scale .3s ease;
+        transform-origin: left;
+    
+        &:hover {
+            opacity: 1;
+            scale: 1.2;
+
+            &::after {
+                content: attr(data-title);
+                display: block;
+                animation: linkItem .3s ease forwards;
+            }
+        }
+    }
+}
+
+.game > .window {    
+    position: absolute;
+    background-color: var(--clr-bg-t05);
+    border: 1px solid var(--clr-border);
+    z-index: 1000;
+
+    &.storage {
+        width: 360px;
+    }
+
+    &.inventory {
+        top: 20%;
+        left: 4em;
+    }
+
+    &.location {
+        bottom: 20%;
+        left: 4em;
+    }
+
+    & .window {
+        &__top-bar {
+            cursor: move;
+            display: grid;
+            grid-template-columns: auto max-content;
+            background-color: var(--clr-bg-t05);
+            border-bottom: 1px solid var(--clr-border);
+
+            &__title {
+                user-select: none;
+            }
+
+            &__btn-list {
+
+                .btn {                        
+                    padding: 4px 8px;
+                    cursor: pointer;
+                }
+            }
+
+            .btn-close {
+                background-color: rgb(105, 0, 0);
+            }
+        }
+    }
+}
+
+.storage {
+
+    &__item-list {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+
+        &:empty {
+            &::after {
+                content: "Empty";
+                color: var(--clr-subtext);
+                aspect-ratio: 1 / 1;
+                display: grid;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+    }
+
+    .item {
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        aspect-ratio: 1 / 1;
+
+        &:hover {
+            .btn {
+                opacity: 1;
+            }
+        }
+
+        & > * {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        &__count {
+            text-align: right;
+            translate: 0 32px;
+        }
+
+        &__emoji {
+            font-size: 3em;
+            line-height: 1;
+        }
+
+        .btn {
+            cursor: pointer;
+            width: fit-content;
+            user-select: none;
+            opacity: 0;
+            transition: opacity .3s ease;
+
+            &:hover {
+                scale: 1.1;
+            }
+        }
+
+        .btn-use {
+            align-self: center;
+            justify-self: center;
+            font-size: 1.25em;
+        }
+
+        .btn-export {            
+            align-self: flex-end;
+            translate: 0 -4px;
+        }
+    }
+}
+
+.shop {
+    display: grid;
+
+    .item {
+        display: grid;
+        grid-template-columns: 2.5em 120px 48px 32px;
+        align-items: center;
+        gap: .5em;
+        width: fit-content;
+        cursor: pointer;
+        user-select: none;
+
+        opacity: 0;
+        animation: linkItem .3s ease forwards;
+        animation-delay: calc(var(--index) * .05s + .05s);
+
+        transition: scale .1s ease;
+
+        &:active {
+            scale: .95;
+        }
+
+        &:hover {
+            .item__name {
+                text-decoration: underline;
+            }
+        }
+
+        &.no-money {
+            cursor: default;
+
+            &:active {
+                scale: 1;
+            }
+
+            .item__name {
+                filter: grayscale(1);
+                text-decoration: none;
+            }
+
+            .item__price {
+                color: var(--clr-bad);
+            }
+        }
+
+        &__name {
+            color: var(--clr-link);
+        }
+
+        &__emoji {
+            font-size: 2em;
+        }
+
+        &__price {
+            color: var(--clr-money);
+            text-align: right;
+        }
+
+        &__own {
+            opacity: .5;
+            text-align: right;
+        }
+    }
+}
+
+.content:has(.shop) {
+    .link {
+        animation: none;
+        transition: opacity .3s ease;
+        opacity: 1;
+    }
+}
 
 .link-list {
     display: grid;

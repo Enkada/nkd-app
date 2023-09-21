@@ -1,8 +1,9 @@
-import { DOW, Time, isBetween, t } from "./Utils"
+import { Shop, _SHOPS } from "./Items"
+import { DOW, isBetween, t } from "./Utils"
 
 export type LocationPath = {
 	id: string,
-	time: Time
+	time: number
 }
 
 export type Location = {
@@ -10,9 +11,10 @@ export type Location = {
 	title: string,
 	image?: string,
 	emoji: string,
-	descriptions: string[],
+	descriptions?: string[],
 	actions?: string[],
 	children?: LocationPath[],
+	shop?: Shop,
 	unavailability?: (time: number, dayOfTheWeek: number) => Reason | null;
 }
 
@@ -41,10 +43,10 @@ const checkUnavailability = (time: number, periods: UnavailabilityPeriod[]): Rea
 }
 
 export const _LOCATIONS: Record<string, Location> = {
-	your_home: {
+	home: {
 		title: "Your home",
-		image: "your_home.jpg",
-		emoji: "🏠",
+		image: "home.jpg",
+		emoji: "🚪",
 		actions: [
 			"work",
 			"sleep"
@@ -54,21 +56,18 @@ export const _LOCATIONS: Record<string, Location> = {
 			"You are at home right now."
 		],
 		children: [
-			{ id: "your_bathroom", time: new Time(0) },
-			{ id: "your_pc", time: new Time(0) }
+			{ id: "bathroom", time: t(0, 0) },
+			{ id: "pc", time: t(0, 0) }
 		]
 	},
-	your_pc: {
+	pc: {
 		title: "PC",
 		image: "pc.jpg",
 		emoji: "💻",
-		descriptions: [
-			"PC.",
-		],
 	},
-	your_bathroom: {
+	bathroom: {
 		title: "Your bathroom",
-		image: "your_bathroom.jpg",
+		image: "bathroom.jpg",
 		emoji: "🛁",
 		actions: [
 			"bath"
@@ -78,27 +77,38 @@ export const _LOCATIONS: Record<string, Location> = {
 			"You are in your bathroom right now."
 		]
 	},
+	stairwell: {
+		title: "Home",
+		image: "stairwell.jpg",
+		emoji: "🏠",
+		descriptions: [
+			"This place appears to be a stairwell.",
+		],
+		children: [
+			{ id: "home", time: t(0, 5) }
+		]
+	},
 	home_street: {
 		title: "Market Street",
 		image: "home_street.jpg",
 		emoji: "🏙",
 		descriptions: [
-			"This place is kinda sus.",
-			"You feel sussy."
+			"There is a local market on this street.",
+			"This street is full of local shops."
 		],
 		children: [
-			{ id: "your_home", time: new Time(5) },
-			{ id: "market", time: new Time(5) },
+			{ id: "stairwell", time: t(0, 5) },
+			{ id: "convenience_store", time: t(0, 5) },
 		]
 	},
-	market: {
-		title: "Market",
-		image: "market.jpg",
+	convenience_store: {
+		title: "Convenience Store",
+		image: "convenience_store.jpg",
 		emoji: "🏬",
-		actions: ["market_eat"],
+		shop: _SHOPS.grocery,
 		descriptions: [
-			"This place appears to be a local market.",
-			"You are in local market right now."
+			"This place appears to be a convenience store.",
+			"You are in convenience store right now."
 		]
 	},
 	sara_street: {
@@ -110,61 +120,9 @@ export const _LOCATIONS: Record<string, Location> = {
 			"Some buildings and a college."
 		],
 		children: [
-			{ id: "college", time: new Time(15) },
-			{ id: "sara_home", time: new Time(5) },
-			{ id: "home_street", time: new Time(10) }
+			{ id: "college", time: t(0, 15) },
+			{ id: "home_street", time: t(0, 10) }
 		]
-	},
-	sara_home: {
-		title: "Sara's home",
-		image: "sara_home.jpg",
-		emoji: "🏡",
-		descriptions: [
-			"You are at Sara's home.",
-			"This is where Sara lives."
-		],
-		unavailability: (time: number, dayOfTheWeek: number): Reason | null => {
-			switch (true) {
-				case isBetween(dayOfTheWeek, DOW.Monday, DOW.Friday):
-
-					return checkUnavailability(time, [
-						{
-							from: t(0, 0), to: t(6, 0),
-							reason: {
-								short: "sleeping",
-								full: [
-									"Sara is having a nice sleep."
-								]
-							}
-						},
-						{
-							from: t(9, 0), to: t(16, 0),
-							reason: {
-								short: "at college",
-								full: [
-									"Sara is at college."
-								]
-							}
-						},
-						{
-							from: t(20, 0), to: t(24, 0),
-							reason: {
-								short: "sleeping",
-								full: [
-									"Sara is having a nice sleep."
-								]
-							}
-						},
-
-					]);
-				default: return {
-					short: "on vacation",
-					full: [
-						"Sara is on vacation."
-					]
-				};
-			}
-		},
 	},
 	college: {
 		title: "College",
@@ -206,5 +164,23 @@ export const _LOCATIONS: Record<string, Location> = {
 				};
 			}
 		},
+	},
+	subway_train: {
+		title: "Subway Train",
+		image: "subway_train.jpg",
+		emoji: "🚈",
+		descriptions: [
+			"You are in subway car.",
+		]
+	},
+	subway: {
+		title: "Subway",
+		image: "subway.jpg",
+		emoji: "🚇",
+		descriptions: [
+			"You are at local subway.",
+			"This is where people go to work.",
+			"You can see some people walking around.",
+		]
 	}
 };

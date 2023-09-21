@@ -20,14 +20,14 @@ export const _CHARACTERS = {
         availability: (time: number, dayOfTheWeek: number): string | null => {
             switch (true) {
                 case isBetween(dayOfTheWeek, DOW.Monday, DOW.Friday):
-                    if (isBetween(time, t(0, 0), t(9, 0)))
-                        return "your_home";
+                    if (isBetween(time, t(0, 0), t(8, 0)))
+                        return "home";
                     if (isBetween(time, t(16, 0), t(24, 0)))
-                        return "your_home";
+                        return "home";
                     break;
                 case isBetween(dayOfTheWeek, DOW.Saturday, DOW.Sunday):
-                    if (isBetween(time, t(12, 0), t(16, 0)))
-                        return "your_home";
+                    if (isBetween(time, t(0, 0), t(24, 0)))
+                        return "home";
                     break;
             }
             return null;

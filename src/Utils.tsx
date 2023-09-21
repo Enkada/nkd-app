@@ -1,22 +1,7 @@
-export class Time {
-	value: number;
+import seedrandom from 'seedrandom';
 
-	constructor(hoursOrMinutes: number, minutes?: number) {
-		if (minutes === undefined) {
-			// If only one argument is provided, assume it's in minutes
-			this.value = hoursOrMinutes;
-		} else {
-			// If both hours and minutes are provided, convert to minutes
-			this.value = hoursOrMinutes * 60 + minutes;
-		}
-	}
-
-	// Method to display the time as a string
-	toString(): string {
-		const hours = Math.floor(this.value / 60);
-		const minutes = this.value % 60;
-		return `${hours}:${minutes.toString().padStart(2, '0')}`;
-	}
+export const timeToString = (time: number) => {
+	return `${Math.floor(time / 60)}:${(time % 60).toString().padStart(2, '0')}`;
 }
 
 // Days Of Week
@@ -49,8 +34,20 @@ export function GetRecordWithIds<T>(record: Record<string, T>) {
 	return newRecord;
 }
 
-export const getRandom = (array: any[]): string => {
-    return array[Math.floor((Math.random() * array.length))];
+function randomWithSeed(seed: string | number): number {
+	const rng = seedrandom(seed.toString()); // Initialize the random number generator with the seed
+	return rng(); // Generate a random number between 0 and 1
+}
+
+export const getRandom = (array: any[] | undefined, seed: string | number | null = null): string => {
+	if (seed === null) {
+		seed = Math.random().toString(36);
+	}
+
+	if (array) {
+		return array[Math.floor((randomWithSeed(seed) * array.length))];
+	}
+    return "";
 }
 
 export const rand = (start: number, end: number) => {
