@@ -1,3 +1,4 @@
+import { ConditionalAction } from "./Action"
 import { Shop, _SHOPS } from "./Items"
 import { DOW, isBetween, t } from "./Utils"
 
@@ -12,7 +13,7 @@ export type Location = {
 	image?: string,
 	emoji: string,
 	descriptions?: string[],
-	actions?: string[],
+	actions?: (string | ConditionalAction)[],
 	children?: LocationPath[],
 	shop?: Shop,
 	unavailability?: (time: number, dayOfTheWeek: number) => Reason | null;
@@ -48,16 +49,16 @@ export const _LOCATIONS: Record<string, Location> = {
 		image: "home.jpg",
 		emoji: "🚪",
 		actions: [
-			"work",
-			"sleep"
+			"work_freelance",
+			"bed"
 		],
 		descriptions: [
 			"This place appears to be your home.",
 			"You are at home right now."
 		],
 		children: [
-			{ id: "bathroom", time: t(0, 0) },
-			{ id: "pc", time: t(0, 0) }
+			{ id: "bathroom", time: 0 },
+			{ id: "pc", time: 0 }
 		]
 	},
 	pc: {
@@ -78,14 +79,14 @@ export const _LOCATIONS: Record<string, Location> = {
 		]
 	},
 	stairwell: {
-		title: "Home",
+		title: "Home Stairwell",
 		image: "stairwell.jpg",
 		emoji: "🏠",
 		descriptions: [
 			"This place appears to be a stairwell.",
 		],
 		children: [
-			{ id: "home", time: t(0, 5) }
+			{ id: "home", time: 0 }
 		]
 	},
 	home_street: {
@@ -121,8 +122,34 @@ export const _LOCATIONS: Record<string, Location> = {
 		],
 		children: [
 			{ id: "college", time: t(0, 15) },
-			{ id: "home_street", time: t(0, 10) }
+			{ id: "home_street", time: t(0, 10) },
+			{ id: "burger_king", time: t(0, 5) },
 		]
+	},
+	burger_king: {
+		title: "Burger King",
+		image: "burger_king.png",
+		emoji: "🍔",
+		shop: _SHOPS.burger_king,
+		actions: [
+			{ action: "burger_king_application", unseenActions: ["burger_king_application"] },
+			{ action: "work_burger_king", seenActions: ["burger_king_application"], time: { from: t(6, 0), to: t(8, 59) } }
+		],
+		descriptions: [
+			"You are at local burger king.",
+			"This is where people eat burgers."
+		],
+		unavailability: (time: number): Reason | null => {
+			return checkUnavailability(time, [{
+				from: t(1, 0), to: t(6, 0),
+				reason: {
+					short: "closed",
+					full: [
+						"Burger King is closed."
+					]
+				}
+			},]);
+		},
 	},
 	college: {
 		title: "College",
@@ -170,7 +197,11 @@ export const _LOCATIONS: Record<string, Location> = {
 		image: "subway_train.jpg",
 		emoji: "🚈",
 		descriptions: [
-			"You are in subway car.",
+			"You are in subway car. \n\n"+
+			"*You can use the wait function by pressing the hourglass icon on the left. \nWait for 10 minutes.*",
+		],
+		actions: [
+			{ action: "intro_1", unseenActions: ["intro_1"], time: { from: t(8, 10), to: t(24, 0) } }
 		]
 	},
 	subway: {

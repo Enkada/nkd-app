@@ -36,7 +36,7 @@ export const Sara = () => {
             <img src="/pc/img/sara.png" />
             <div className='intro__text'>
                 <h1>Sara</h1>
-                <p><b>Sara</b> is one of the in-game characters, initially unavailable, with the option to install at will through the terminal</p>
+                <p><b>Sara</b> is one of the in-game characters</p>
             </div>
         </div>
 
@@ -79,10 +79,5 @@ export const Sara = () => {
         >
             {descrption}
         </ReactMarkdown>
-
-        <h2>Installation</h2>
-        <p>Open Terminal and type this command:</p>
-        <pre>install sara</pre>
-        <p>After that, the character "Sara" becomes available for interaction</p>
     </div>)
 }

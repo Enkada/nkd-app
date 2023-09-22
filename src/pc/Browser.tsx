@@ -21,7 +21,7 @@ export const Browser = ({
 }: {
     setApps: React.Dispatch<React.SetStateAction<string[]>>,
 }) => {
-    const [url, setUrl] = useState("sara.com");
+    const [url, setUrl] = useState("browser:homepage");
     const [page, setPage] = useState(<div>Loading</div>);
 
     const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -65,12 +65,10 @@ export const Browser = ({
                     <p>Version 0 (as for 21.09.23)</p>
                     <p>TODO List:</p>
                     <ul>
+                        <li>Clothing system</li>
                         <li>Day/Night/Evening-Morning backgrounds</li>
-                        <li>Partially move Location/Action logic into getContent</li>
                         <li>Bettter Return in actions</li>
-                        <li>improve extraContent - add \n</li>
-                        <li>Ignored actions</li>
-                        <li>Loiter</li>
+                        <li>Ignored actions (ConditionalAction)</li>
                         <li>More animation</li>
                     </ul>
                 </div>);

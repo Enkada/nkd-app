@@ -50,6 +50,18 @@ export const getRandom = (array: any[] | undefined, seed: string | number | null
     return "";
 }
 
-export const rand = (start: number, end: number) => {
-    return Math.floor((Math.random() * end)) + start;
+export const rand = (start: number, end: number, seed: string | number | null = null) => {
+	if (seed === null) {
+		seed = Math.random().toString(36);
+	}
+
+    return Math.floor((randomWithSeed(seed) * (end - start + 1))) + start;
+}
+
+export const randPow = (start: number, end: number, seed: string | number | null = null, power: number = 2) => {
+	if (seed === null) {
+		seed = Math.random().toString(36);
+	}
+
+    return Math.floor((Math.pow(randomWithSeed(seed), power) * (end - start + 1))) + start;
 }

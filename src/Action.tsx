@@ -14,32 +14,75 @@ export type Action = {
 	isRest?: boolean,
 	cost?: Cost,
 	location?: string,
-	character?: string | null
+	character?: string | null,
+	isHandled?: boolean
 }
 
 export type Cost = {
 	money?: number,
 	energy?: number,
+	food?: number
+}
+
+export type ConditionalAction = {
+	action: string,
+	seenActions?: string[],
+	unseenActions?: string[],
+	time?: {
+		from: number,
+		to: number
+	}
+}
+
+const sleepAction = (hours: number):Action => {
+	return {
+		title: `Sleep for ${hours} hour${hours > 1 ? "s" : ""}`, emoji: "💤", time: t(hours, 0), isRest: true, returnEmoji: '🥱', returnText: 'Wake up',
+		text: [
+			`Let's get some rest. \nYou sleep for ${hours} hours.`,
+			`Time to have some sleep. The bed us comfy. \nYou sleep for ${hours} hours`
+		]
+	};
 }
 
 export const _ACTIONS: Record<string, Action> = {
 	intro_0: {
 		text: [
-			"Welcome to the game. You are about to see Sara.",
+			"You're in a subway car, the doors just closed, and you're on your way to Sara, your friend you've been conversing with online for years now. \n\n" +
+			"You're just about to reach the station where she's waiting for you.",
 		],
-		actions: ["intro_1"],
-		hideReturn: true
+		returnText: "Start",
+		returnEmoji: "▶️"
 	},
 	intro_1: {
-		title: "Wait", emoji: "🕐",
+		title: "Get ready to get out", emoji: "🚪",
 		text: [
-			"Subway stops."
+			"This is your stop. Time to step off into the unknown and finally meet Sara."
+		],
+		actions: ["intro_get_out"],
+		hideReturn: true
+	},
+	intro_get_out: {
+		title: "Get out", emoji: "🏃🏻",
+		text: [
+			"She said she'd be waiting for me at the station."
 		],
 		location: "subway",
-		returnText: "Get out"
+		returnText: "Look out"
 	},
-	intro_2: {
-		title: "Let's go home", emoji: "🏠",
+	intro_greeting: {
+		title: "Excuse me?", emoji: "😳",
+		text: [
+			"b: H-hey! Is... is that you? Enkada?\n" +
+			"a: Yea, that's me, hi.\n" +
+			"b: Nice to meet you in person.\n" +
+			"b: I feel like I already know you, but at the same time, you're a complete stranger to me.\n" +
+			"b: So, shall we go?\n"		
+		],
+		actions: ["intro_go_home"],
+		hideReturn: true
+	},
+	intro_go_home: {
+		title: "Yep", emoji: "🚶🏻",
 		text: [
 			"You are at home street."
 		],
@@ -72,12 +115,13 @@ export const _ACTIONS: Record<string, Action> = {
 			`It's always good to take a bath once in a while.`
 		]
 	},
-	work: {
-		title: "Work", emoji: "👨‍💻", time: t(1, 0),
-		cost: { energy: 10 },
+	work_freelance: {
+		title: "Work as freelancer", emoji: "👨‍💻", time: t(1, 0),
+		cost: { energy: 8 },
 		text: [
 			'You spend some time to find a job to do.',
 			'You are trying to find a proper task to do for some money.',
+			'You are in search of a job to do.',
 		]
 	},
 	market_eat: {
@@ -88,17 +132,33 @@ export const _ACTIONS: Record<string, Action> = {
 			'You purchased hotdog, it tastes nice.',
 		]
 	},
-	sleep: {
-		title: "Sleep", emoji: "💤", time: t(7, 0), isRest: true, returnEmoji: '🥱', returnText: 'Wake up',
+	bed: {
+		title: "Bed", emoji: "🛏",
 		text: [
-			"Let's get some rest. \nYou sleep for 7 hours.",
-			"Time to have some sleep. The bed us comfy. \nYou sleep for 7 hours"
-		]
+			'You are in bed right now.',
+			'You are in your bed right now.'
+		],
+		actions: ["sleep_1", "sleep_2", "sleep_3", "sleep_4", "sleep_5", "sleep_6", "sleep_7"]
 	},
-	start: {
-		text: [`So, welcome to this app I made. I created this place because of one particular girl, a girl names Sara. This universe just for her and her only. I might sound obsessed with this girl, but believe me, I am.\nI could tell you so many things about Sara, but.. why don't you speak with her by yourself? This application allows you to enter the world she lives in. I want this journey to be a little bit challenging for you, so I won't give you any starting bonus.\nIt is Wednesday today, 8 in the morning, I think it is a good time for a walk.`],
-		returnEmoji: '▶️',
-		returnText: "Start"
+	sleep_1: sleepAction(1),
+	sleep_2: sleepAction(2),
+	sleep_3: sleepAction(3),
+	sleep_4: sleepAction(4),
+	sleep_5: sleepAction(5),
+	sleep_6: sleepAction(6),
+	sleep_7: sleepAction(7),
+	burger_king_application: {
+		title: "Apply for a job", emoji: "👔", time: t(0, 30),
+		text: [
+			'You apply for a job at Burger King.',
+		],
+	},
+	work_burger_king: {
+		title: "Work", emoji: "👔", time: t(8, 0),
+		cost: { energy: 10, food: -30 },
+		text: [
+			'You work at Burger King.',
+		]
 	},
 	sara_examine: {
 		title: "Examine", emoji: "🔍",

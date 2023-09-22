@@ -25,7 +25,7 @@ export const Background = ({
 
     return (
         <>
-            <img src={`/place/${current?.image}`} className='background background--current' />            
+            <img src={`/place/${current?.image}`} className='background background--current' />          
 			<div>{current?.items.map((item, index) => <img key={index} className='background-item background-item--current' src={`/place/item/${item}.png`}/>)}</div>
 			<img src={`/place/${old?.image}`} ref={bgRef} className='background background--old' />
 			<div>{old?.items.map((item, index) => <img key={index} className='background-item background-item--old' src={`/place/item/${item}.png`}/>)}</div>

@@ -16,6 +16,15 @@
     }
 }
 
+@keyframes opacityFilter {
+    from {
+        filter: opacity(0);
+    }
+    to {
+        filter: opacity(1);
+    }
+}
+
 @keyframes characterAnimation {
     0% {
         opacity: 0;

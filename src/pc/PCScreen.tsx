@@ -3,7 +3,7 @@ import Draggable from 'react-draggable'
 import { Browser } from './Browser'
 import { Terminal } from './Terminal'
 
-type File = {
+export type File = {
     name: string,
     icon: string,
     type: "folder" | "img" | "txt",
@@ -208,7 +208,7 @@ export const PCScreen = ({
                 </>)}
                 {!!(apps.includes("Browser")) && <Browser setApps={setApps} />}
                 {!!(apps.includes("Explorer")) && <Explorer setApps={setApps} setImg={setImg} setTxt={setTxt} />}
-                {!!(apps.includes("Terminal")) && <Terminal setApps={setApps} />}
+                {!!(apps.includes("Terminal")) && <Terminal root={EXPLORER_ROOT} setApps={setApps} />}
                 {!!img && <ImgViewer img={img} setImg={setImg} />}
                 {!!txt && <TxtViewer txt={txt} setTxt={setTxt} />}
             </div>
