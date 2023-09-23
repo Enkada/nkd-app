@@ -1,12 +1,14 @@
-import { DOW, isBetween, t } from "./Utils";
+import { DOW, GetRecordWithIds, isBetween, t } from "../Utils";
 
 export type Character = {
-	id?: string,
+	id: string,
     name: string;
     availability?: (time: number, dayOfTheWeek: number) => string | null;
     actions?: string[];
     greetings: string[];
 }
+
+type _Character = Omit<Character, 'id'>
 
 const defaultGreetings = [
     "Hi.", "Nice to see you there.", "Glad to see ya.", "It's good to see you again.",
@@ -14,7 +16,7 @@ const defaultGreetings = [
     "Great to see you!", "Good to see you!", "Hi there!"
 ]
 
-export const _CHARACTERS = {
+export const _CHARACTERS: Record<string, _Character> = {
     sara: {
         name: "Sara",
         availability: (time: number, dayOfTheWeek: number): string | null => {
@@ -63,3 +65,5 @@ export const _CHARACTERS = {
         greetings: defaultGreetings
     },
 };
+
+export const CHARACTERS = GetRecordWithIds(_CHARACTERS) as Record<string, Character>;

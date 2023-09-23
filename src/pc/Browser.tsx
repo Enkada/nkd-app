@@ -67,8 +67,7 @@ export const Browser = ({
                     <ul>
                         <li>Clothing system</li>
                         <li>Day/Night/Evening-Morning backgrounds</li>
-                        <li>Bettter Return in actions</li>
-                        <li>Ignored actions (ConditionalAction)</li>
+                        <li>Bettter Return in actions (?)</li>
                         <li>More animation</li>
                     </ul>
                 </div>);

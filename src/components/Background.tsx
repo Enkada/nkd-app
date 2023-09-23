@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react'
-import { LocationBackground } from './App';
+import { LocationBackground } from '../App';
 
 export const Background = ({
     current, 

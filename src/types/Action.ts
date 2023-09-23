@@ -1,7 +1,7 @@
-import { t } from "./Utils";
+import { GetRecordWithIds, t } from "../Utils";
 
 export type Action = {
-	id?: string,
+	id: string,
 	title?: string,
 	emoji?: string,
 	returnEmoji?: string,
@@ -17,6 +17,9 @@ export type Action = {
 	character?: string | null,
 	isHandled?: boolean
 }
+
+type _Action = Omit<Action, 'id'>
+
 
 export type Cost = {
 	money?: number,
@@ -34,7 +37,7 @@ export type ConditionalAction = {
 	}
 }
 
-const sleepAction = (hours: number):Action => {
+const sleepAction = (hours: number):_Action => {
 	return {
 		title: `Sleep for ${hours} hour${hours > 1 ? "s" : ""}`, emoji: "💤", time: t(hours, 0), isRest: true, returnEmoji: '🥱', returnText: 'Wake up',
 		text: [
@@ -44,7 +47,7 @@ const sleepAction = (hours: number):Action => {
 	};
 }
 
-export const _ACTIONS: Record<string, Action> = {
+const _ACTIONS: Record<string, _Action> = {
 	intro_0: {
 		text: [
 			"You're in a subway car, the doors just closed, and you're on your way to Sara, your friend you've been conversing with online for years now. \n\n" +
@@ -228,3 +231,5 @@ export const _ACTIONS: Record<string, Action> = {
 		returnToStart: true
 	}
 };
+
+export const ACTIONS = GetRecordWithIds(_ACTIONS) as Record<string, Action>;

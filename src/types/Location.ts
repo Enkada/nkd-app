@@ -1,6 +1,6 @@
 import { ConditionalAction } from "./Action"
-import { Shop, _SHOPS } from "./Items"
-import { DOW, isBetween, t } from "./Utils"
+import { DOW, GetRecordWithIds, isBetween, t } from "../Utils"
+import { SHOPS, Shop } from "./Shop"
 
 export type LocationPath = {
 	id: string,
@@ -8,7 +8,7 @@ export type LocationPath = {
 }
 
 export type Location = {
-	id?: string,
+	id: string,
 	title: string,
 	image?: string,
 	emoji: string,
@@ -19,11 +19,12 @@ export type Location = {
 	unavailability?: (time: number, dayOfTheWeek: number) => Reason | null;
 }
 
+type _Location = Omit<Location, 'id'>
+
 export type Reason = {
 	short: string,
 	full: string[]
 }
-
 
 type UnavailabilityPeriod = {
     from: number;
@@ -43,7 +44,7 @@ const checkUnavailability = (time: number, periods: UnavailabilityPeriod[]): Rea
 	return null;
 }
 
-export const _LOCATIONS: Record<string, Location> = {
+const _LOCATIONS: Record<string, _Location> = {
 	home: {
 		title: "Your home",
 		image: "home.jpg",
@@ -106,7 +107,7 @@ export const _LOCATIONS: Record<string, Location> = {
 		title: "Convenience Store",
 		image: "convenience_store.jpg",
 		emoji: "🏬",
-		shop: _SHOPS.grocery,
+		shop: SHOPS.grocery,
 		descriptions: [
 			"This place appears to be a convenience store.",
 			"You are in convenience store right now."
@@ -130,10 +131,10 @@ export const _LOCATIONS: Record<string, Location> = {
 		title: "Burger King",
 		image: "burger_king.png",
 		emoji: "🍔",
-		shop: _SHOPS.burger_king,
+		shop: SHOPS.burger_king,
 		actions: [
 			{ action: "burger_king_application", unseenActions: ["burger_king_application"] },
-			{ action: "work_burger_king", seenActions: ["burger_king_application"], time: { from: t(6, 0), to: t(8, 59) } }
+			{ action: "work_burger_king", seenActions: ["burger_king_application"], time: { from: t(6, 0), to: t(9, 9) } }
 		],
 		descriptions: [
 			"You are at local burger king.",
@@ -215,3 +216,5 @@ export const _LOCATIONS: Record<string, Location> = {
 		]
 	}
 };
+
+export const LOCATIONS = GetRecordWithIds(_LOCATIONS) as Record<string, Location>;

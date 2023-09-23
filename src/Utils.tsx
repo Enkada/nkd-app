@@ -50,6 +50,26 @@ export const getRandom = (array: any[] | undefined, seed: string | number | null
     return "";
 }
 
+export const getDate = (day: number): Date => {
+	return new Date(new Date(2000, 8, 23).getTime() + (day - 1) * 86400000);
+}
+
+export const getDayOfTheWeek = (date: Date): number => {
+	const day = date.getDay();
+	return day === 0 ? 6 : day;
+}
+
+export const formatText = (text: string): string => {
+	text = text.replace(/a: (.*)/g, '<span class="line self-line">$1</span>');
+	text = text.replace(/b: (.*)/g, '<span class="line character-line">$1</span>');
+	text = text.replace(/\n/g, '<br>');
+	text = text.replace(/Sara/g, '<span class="sara">Sara</span>');
+	text = text.replace(/\d+(\.\d+)?\$/g, "<span class='money'>$&</span>");
+	text = text.replace(/(?<!\*)\*([^*]*?)\*(?!\*)/g, '<span class="subtext">$1</span>');
+
+	return text;
+}
+
 export const rand = (start: number, end: number, seed: string | number | null = null) => {
 	if (seed === null) {
 		seed = Math.random().toString(36);
