@@ -62,11 +62,10 @@ export const Browser = ({
                 setPage(<div className='nkd-page'>
                     <h1>NKD</h1>
                     <h3>made by <a href="https://enkada.ru" target='blank'>Enkada</a></h3>
-                    <p>Version 0 (as for 21.09.23)</p>
+                    <p>Version 0 (as for 23.09.23)</p>
                     <p>TODO List:</p>
                     <ul>
                         <li>Clothing system</li>
-                        <li>Day/Night/Evening-Morning backgrounds</li>
                         <li>Bettter Return in actions (?)</li>
                         <li>More animation</li>
                     </ul>

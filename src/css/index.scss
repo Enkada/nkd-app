@@ -222,24 +222,36 @@ button {
     }
 }
 
+@keyframes test {
+    from {        
+        translate: 0 0px;
+    }
+    to {
+
+        translate: 0 1000px;
+    }
+}
+
+.background-group {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    filter: brightness(.5);
+
+    &--old {
+        animation: backgroundAnimation .3s ease forwards;
+    }
+}
+
 .background {
     position: absolute;
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: brightness(.5);
+    transition: all .3s ease;
+    opacity: 1;
     z-index: -1000;
-
-    &--old {
-        &.anim {
-            animation: backgroundAnimation .3s ease forwards;
-        }
-
-        &.animated {
-            opacity: 0;
-        }
-    }
 }
 
 .background-item {
@@ -248,16 +260,7 @@ button {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: brightness(.5);
     z-index: -500;
-
-    &--current {
-        animation: opacity .3s ease forwards;
-    }
-
-    &--old {
-        animation: backgroundAnimation .3s ease forwards;
-    }
 }
 
 .content-wrapper {

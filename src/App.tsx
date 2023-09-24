@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { t, getDayOfTheWeek, getDate, formatText } from './Utils';
+import { t, getDayOfTheWeek, getDate } from './Utils';
 import { Location, LocationPath, LOCATIONS } from './types/Location';
 import { Action } from './types/Action';
 import { Character, CHARACTERS } from './types/Character';
@@ -62,21 +62,10 @@ export type SetStat = {
 const initialLocation = LOCATIONS.home;
 const initialAction = null;
 
-export type LocationBackground = {
-	image?: string,
-	items: string[]
-}
-
 function App() {
 	const [location, setLocation] = useState<Location>(initialLocation);
 	const [action, setAction] = useState<Action | null>(initialAction);
 	const [character, setCharacter] = useState<Character | null>(null);
-
-	// TODO: Move to Background.tsx
-	const [prevBackground, setPrevBackground] = useState<LocationBackground>({
-		image: initialLocation.image,
-		items: []
-	});
 
 	const [day, setDay] = useState(1);
 	const [money, setMoney] = useState(5);
@@ -135,11 +124,6 @@ function App() {
 
 	const [showPCScreen, setShowPCScreen] = useState(false);
 
-	const getLocationItems = (): string[] => {
-		if (!storages[location.id]) return [];
-		return storages[location.id].filter(x => x.type === "location").map(x => x.id);
-	}
-
 	const handleLocationChange = (path: LocationPath) => {
 		handleTimeChange(path.time);
 
@@ -150,7 +134,6 @@ function App() {
 				break;
 		}
 
-		setPrevBackground({ image: location.image, items: getLocationItems() });
 		setLocation(LOCATIONS[path.id]);
 	}
 
@@ -353,11 +336,11 @@ function App() {
 	return (
 		<div className="game">
 			<div className="preload">
-				{Object.values(LOCATIONS).map((location, index) => (
-					<img key={index} src={`/place/${location.image}`} />
+				{Object.values(LOCATIONS).flatMap(location => Object.values(location.image)).map((image, index) => (
+					<img key={index} src={`/place/${image}`} />
 				))}
 			</div>
-			<Background current={{ image: location.image, items: getLocationItems() }} old={prevBackground} />
+			<Background stat={stat}/>
 			<InfoBar stat={stat}/>
 			<div className="menu">
 				{!!(action === null && character === null && energy.current > 0) && <div className="btn" data-title="Wait" onClick={() => setIsWaitMenuOpen(!isWaitMenuOpen)}>⏳</div>}

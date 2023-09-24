@@ -10,7 +10,7 @@ export type LocationPath = {
 export type Location = {
 	id: string,
 	title: string,
-	image?: string,
+	image: LocationBackgroundPeriods,
 	emoji: string,
 	descriptions?: string[],
 	actions?: (string | ConditionalAction)[],
@@ -32,6 +32,12 @@ type UnavailabilityPeriod = {
     reason: Reason
 }
 
+export type LocationBackgroundPeriods = {
+	day: string,
+	night?: string,
+	twilight?: string
+}
+
 const checkUnavailability = (time: number, periods: UnavailabilityPeriod[]): Reason | null => {
 	for (let index = 0; index < periods.length; index++) {
 		const period = periods[index];
@@ -47,7 +53,9 @@ const checkUnavailability = (time: number, periods: UnavailabilityPeriod[]): Rea
 const _LOCATIONS: Record<string, _Location> = {
 	home: {
 		title: "Your home",
-		image: "home.jpg",
+		image: {
+			day: "home.jpg"
+		},
 		emoji: "🚪",
 		actions: [
 			"work_freelance",
@@ -64,12 +72,16 @@ const _LOCATIONS: Record<string, _Location> = {
 	},
 	pc: {
 		title: "PC",
-		image: "pc.jpg",
+		image: {
+			day: "pc.jpg",
+		},
 		emoji: "💻",
 	},
 	bathroom: {
 		title: "Your bathroom",
-		image: "bathroom.jpg",
+		image: {
+			day: "bathroom.jpg"
+		},
 		emoji: "🛁",
 		actions: [
 			"bath"
@@ -81,7 +93,9 @@ const _LOCATIONS: Record<string, _Location> = {
 	},
 	stairwell: {
 		title: "Home Stairwell",
-		image: "stairwell.jpg",
+		image: {
+			day: "stairwell.jpg",
+		},
 		emoji: "🏠",
 		descriptions: [
 			"This place appears to be a stairwell.",
@@ -92,7 +106,11 @@ const _LOCATIONS: Record<string, _Location> = {
 	},
 	home_street: {
 		title: "Market Street",
-		image: "home_street.jpg",
+		image: {
+			day: "home_street.jpg",
+			night: "home_street_night.jpg",
+			twilight: "home_street_twilight.jpg"
+		},
 		emoji: "🏙",
 		descriptions: [
 			"There is a local market on this street.",
@@ -105,7 +123,9 @@ const _LOCATIONS: Record<string, _Location> = {
 	},
 	convenience_store: {
 		title: "Convenience Store",
-		image: "convenience_store.jpg",
+		image: {
+			day: "convenience_store.jpg",
+		},
 		emoji: "🏬",
 		shop: SHOPS.grocery,
 		descriptions: [
@@ -115,7 +135,9 @@ const _LOCATIONS: Record<string, _Location> = {
 	},
 	sara_street: {
 		title: "Bright Street",
-		image: "sara_street.jpg",
+		image: {
+			day: "sara_street.jpg",
+		},
 		emoji: "🏙",
 		descriptions: [
 			"There is a college on this street, you can see some student walking around.",
@@ -129,7 +151,11 @@ const _LOCATIONS: Record<string, _Location> = {
 	},
 	burger_king: {
 		title: "Burger King",
-		image: "burger_king.png",
+		image: {
+			day: "burger_king.jpg",
+			night: "burger_king_night.jpg",
+			twilight: "burger_king_twilight.jpg"
+		},
 		emoji: "🍔",
 		shop: SHOPS.burger_king,
 		actions: [
@@ -154,7 +180,9 @@ const _LOCATIONS: Record<string, _Location> = {
 	},
 	college: {
 		title: "College",
-		image: "college.jpg",
+		image: {
+			day: "college.jpg",
+		},
 		emoji: "🏫",
 		descriptions: [
 			"You are at local college.",
@@ -195,7 +223,9 @@ const _LOCATIONS: Record<string, _Location> = {
 	},
 	subway_train: {
 		title: "Subway Train",
-		image: "subway_train.jpg",
+		image: {
+			day: "subway_train.jpg",
+		},
 		emoji: "🚈",
 		descriptions: [
 			"You are in subway car. \n\n"+
@@ -207,7 +237,9 @@ const _LOCATIONS: Record<string, _Location> = {
 	},
 	subway: {
 		title: "Subway",
-		image: "subway.jpg",
+		image: {
+			day: "subway.jpg",
+		},
 		emoji: "🚇",
 		descriptions: [
 			"You are at local subway.",
