@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap");
 @keyframes backgroundAnimation {
   from {
     opacity: 1;
@@ -563,6 +564,58 @@
   font-size: 2em;
 }
 
+.map__wrapper {
+  width: inherit;
+  height: inherit;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  background-image: url("map.png");
+  background-size: cover;
+}
+.map line {
+  stroke: rgba(161, 132, 76, 0.795);
+  stroke-width: 4px;
+}
+.map .link:hover .time {
+  opacity: 1;
+}
+.map svg {
+  position: absolute;
+  width: 2000px;
+  height: 2000px;
+  top: 50%;
+  left: 50%;
+  margin-left: -1000px;
+  margin-top: -1000px;
+}
+.map .time {
+  fill: var(--clr-text);
+  text-shadow: 1px 1px 0px black;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.map .emoji {
+  font-family: var(--font-family-emoji);
+  font-size: 1.5em;
+}
+.map .node.current .emoji {
+  filter: drop-shadow(0 0 4px #ffae00) drop-shadow(0 0 4px #ffae00);
+}
+.map .node:hover .title, .map .node.current .title {
+  opacity: 1;
+}
+.map .title {
+  fill: var(--clr-text);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  text-shadow: 1px 1px black;
+  z-index: 1000;
+  position: absolute;
+  max-width: 100px;
+  filter: drop-shadow(0 0 4px black) drop-shadow(0 0 4px black);
+}
+
 @font-face {
   font-family: ibmvga8;
   src: url("ibm_vga8.ttf") format("truetype");
@@ -585,7 +638,7 @@
   --clr-good: rgb(67, 179, 73);
   --clr-sara: hsl(170, 60%, 50%);
   --font-family: "MS PGothic", monospace;
-  --font-family-emoji: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-family-emoji: "Noto Color Emoji", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 * {
@@ -700,6 +753,7 @@ button:active {
 }
 .info-bar .stat .emoji {
   text-shadow: none;
+  font-family: var(--font-family-emoji);
 }
 .info-bar .time {
   text-align: center;
@@ -748,14 +802,6 @@ button:active {
   text-align: right;
 }
 
-@keyframes test {
-  from {
-    translate: 0 0px;
-  }
-  to {
-    translate: 0 1000px;
-  }
-}
 .background-group {
   position: absolute;
   width: 100%;
@@ -867,6 +913,8 @@ button:active {
   position: relative;
   margin-right: -3em;
   translate: 1em 0;
+  object-view-box: inset(0% 0% 22% 0%);
+  image-rendering: optimizequality;
   animation: characterAnimation 0.5s ease forwards;
   transform-origin: bottom;
 }
@@ -949,8 +997,24 @@ button:active {
   opacity: 0;
   animation: characterAnimation 0.3s ease forwards;
 }
+.game > .window.resize {
+  resize: both;
+  overflow: hidden;
+}
 .game > .window.storage {
   width: 360px;
+}
+.game > .window.map {
+  display: grid;
+  grid-template-rows: max-content auto;
+  z-index: 2000;
+  width: 700px;
+  height: 600px;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  -webkit-backdrop-filter: blur(2px);
+          backdrop-filter: blur(2px);
 }
 .game > .window.inventory {
   top: 20%;
@@ -976,6 +1040,7 @@ button:active {
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
+  padding-left: 2px;
 }
 .game > .window .window__top-bar__btn-list .btn {
   padding: 4px 8px;
@@ -1017,6 +1082,7 @@ button:active {
 .storage .item__emoji {
   font-size: 3em;
   line-height: 1;
+  font-family: var(--font-family-emoji);
 }
 .storage .item .btn {
   cursor: pointer;
@@ -1093,6 +1159,7 @@ button:active {
 .shop .item__emoji {
   font-size: 2em;
   text-align: center;
+  font-family: var(--font-family-emoji);
 }
 .shop .item__price {
   color: var(--clr-money);
@@ -1133,6 +1200,24 @@ button:active {
   font-size: 1.25em;
   color: var(--clr-bad);
   text-shadow: 1px 1px 0px black;
+}
+
+.loading {
+  position: absolute;
+  z-index: 1000;
+  inset: 0;
+  background-color: var(--clr-bg-t05);
+  -webkit-backdrop-filter: blur(20px);
+          backdrop-filter: blur(20px);
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  transition: opacity 0.5s ease;
+  opacity: 1;
+}
+.loading--done {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .link-list {

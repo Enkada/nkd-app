@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { t, getDayOfTheWeek, getDate } from './Utils';
 import { Location, LocationPath, LOCATIONS } from './types/Location';
-import { Action } from './types/Action';
+import { ACTIONS, Action } from './types/Action';
 import { Character, CHARACTERS } from './types/Character';
 import { Background } from './components/Background';
 import { PCScreen } from './pc/PCScreen';
@@ -10,6 +10,8 @@ import { DraggableWindow } from './components/DraggableWindow';
 import { InfoBar } from './components/InfoBar';
 import { Content } from './components/Content';
 import { NotificationList } from './components/NotificationList';
+import { ImagePreload } from './components/ImagePreload';
+import { Map } from './components/Map';
 
 export const energyLossMultiplier = 8;
 export const foodLossMultiplier = 6;
@@ -89,9 +91,11 @@ function App() {
 	});	
 	const [seenActions, setSeenActions] = useState<string[]>([]);
 
+	const [isLoading, setIsLoading] = useState(true);
 	const [isInventoryOpen, setIsInventoryOpen] = useState(false);
 	const [isStorageOpen, setIsStorageOpen] = useState(false);
 	const [isWaitMenuOpen, setIsWaitMenuOpen] = useState(false);
+	const [isMapOpen, setIsMapOpen] = useState(false);
 	const [waitValue, setWaitValue] = useState(5);
 	const [notifications, setNotifications] = useState<string[]>([]);
 	const [gameOverMessage, setGameOverMessage] = useState("");
@@ -333,18 +337,35 @@ function App() {
 		}
 	});
 
+	const getCharacterImage = (character: Character) => {
+		let characterImage = character.id;
+		if (character.image) {	
+			const entry = Object.entries(character.image).find(x => x[1].includes(location.id));
+	
+			if (entry) {
+				characterImage = `${character.id}_${entry[0]}`;
+			}
+			else {
+				characterImage = `${character.id}_${Object.keys(character.image)[0]}`;
+			}
+		}
+		return characterImage;
+	}
+	
 	return (
 		<div className="game">
-			<div className="preload">
-				{Object.values(LOCATIONS).flatMap(location => Object.values(location.image)).map((image, index) => (
-					<img key={index} src={`/place/${image}`} />
-				))}
-			</div>
+			{!!isMapOpen && <DraggableWindow className="map resize" title='🗺️ Map' onClose={() => setIsMapOpen(false)}>
+				<div className="map__wrapper">
+					<Map location={location}/>
+				</div>
+			</DraggableWindow>}
+			<ImagePreload setIsLoading={setIsLoading}/>
 			<Background stat={stat}/>
 			<InfoBar stat={stat}/>
 			<div className="menu">
 				{!!(action === null && character === null && energy.current > 0) && <div className="btn" data-title="Wait" onClick={() => setIsWaitMenuOpen(!isWaitMenuOpen)}>⏳</div>}
 				<div className="btn" data-title='Inventory' onClick={() => setIsInventoryOpen(!isInventoryOpen)}>💼</div>
+				<div className="btn" data-title='Map' onClick={() => setIsMapOpen(!isMapOpen)}>🗺️</div>
 				{!!(Object.keys(storages).includes(location.id)) && <div className="btn" data-title={`${location.title} Storage`} onClick={() => setIsStorageOpen(!isStorageOpen)}>📦</div>}
 			</div>
 			<NotificationList notifications={notifications}/>
@@ -386,7 +407,12 @@ function App() {
 			</DraggableWindow>}
 			{showPCScreen ? <PCScreen handlePCExit={handlePCExit} /> :
 			<div className="content-wrapper">
-				{!!character && <img className="character" style={{ shapeOutside: `url(/character/${character.id}.png)` }} src={`/character/${character.id}.png`} />}
+				{!!character && 
+				<img 
+					className="character" 
+					style={{ shapeOutside: `url(/character/${getCharacterImage(character)}.png)` }} 
+					src={`/character/${getCharacterImage(character)}.png`} 
+				/>}
 				<div className="height-fix" style={{ "--height": contentHeight + "px" } as React.CSSProperties}></div>
 				<div className="content" ref={contentRef}>
 					<Content
@@ -406,6 +432,7 @@ function App() {
 					<div className="game-over__message">{gameOverMessage}</div>	
 				</div>
 			</div>}
+			<div className={`loading ${isLoading ? "loading--active" : "loading--done"}`}>Loading</div>
 		</div>
 	);
 }

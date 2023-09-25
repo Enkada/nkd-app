@@ -91,19 +91,19 @@ const _ACTIONS: Record<string, _Action> = {
 		],
 		location: "home_street",
 		character: null,
-		actions: ["intro_3"],
+		actions: ["intro_stairwell"],
 		hideReturn: true
 	},
-	intro_3: {
+	intro_stairwell: {
 		title: "Continue", emoji: "👀",
 		text: [
 			"You are at home stairwell."
 		],
 		location: "stairwell",
-		actions: ["intro_4"],
+		actions: ["intro_home"],
 		hideReturn: true
 	},
-	intro_4: {
+	intro_home: {
 		title: "Continue", emoji: "👀",
 		text: [
 			"You are at home."

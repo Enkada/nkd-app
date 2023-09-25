@@ -119,6 +119,22 @@ const _LOCATIONS: Record<string, _Location> = {
 		children: [
 			{ id: "stairwell", time: t(0, 5) },
 			{ id: "convenience_store", time: t(0, 5) },
+			{ id: "bus_stop_home_street", time: t(0, 5) }
+		]
+	},
+	bus_stop_home_street: {
+		title: "Bus Stop on Market Street",
+		image: {
+			day: "bus_stop.png",
+		},
+		emoji: "🚌",
+		descriptions: [
+			"You are at bus stop on Market Street.",
+			"This is a bus stop on Market Street."
+		],
+		children: [
+			{ id: "bus_stop_college_street", time: t(0, 15) },
+			{ id: "bus_stop_grand_street", time: t(0, 15) }
 		]
 	},
 	convenience_store: {
@@ -126,17 +142,17 @@ const _LOCATIONS: Record<string, _Location> = {
 		image: {
 			day: "convenience_store.jpg",
 		},
-		emoji: "🏬",
+		emoji: "🏪",
 		shop: SHOPS.grocery,
 		descriptions: [
 			"This place appears to be a convenience store.",
 			"You are in convenience store right now."
 		]
 	},
-	sara_street: {
+	college_street: {
 		title: "Bright Street",
 		image: {
-			day: "sara_street.jpg",
+			day: "college_street.png",
 		},
 		emoji: "🏙",
 		descriptions: [
@@ -145,8 +161,73 @@ const _LOCATIONS: Record<string, _Location> = {
 		],
 		children: [
 			{ id: "college", time: t(0, 15) },
-			{ id: "home_street", time: t(0, 10) },
+			{ id: "bus_stop_college_street", time: t(0, 5) }
+		]
+	},
+	bus_stop_college_street: {
+		title: "Bus Stop on Bright Street",
+		image: {
+			day: "bus_stop.png",
+		},
+		emoji: "🚌",
+		descriptions: [
+			"You are at bus stop on Bright Street.",
+			"This is a bus stop on Bright Street."
+		],
+		children: [
+			{ id: "bus_stop_grand_street", time: t(0, 15) }
+		]
+	},
+	grand_street: {
+		title: "Grand Street",
+		image: {
+			day: "grand_street.png",
+		},
+		emoji: "🏘",
+		descriptions: [
+			"There is a shopping mall on this street.",
+			"You are on a Grand Street."
+		],
+		children: [
+			{ id: "bus_stop_grand_street", time: t(0, 5) },
+			{ id: "department_store", time: t(0, 5) }
+		]
+	},
+	department_store: {
+		title: "Department Store",
+		image: {
+			day: "department_store.png",
+		},
+		emoji: "🛍️",
+		descriptions: [
+			"This place appears to be a department store.",
+			"You are in department store right now."
+		],
+		children: [
 			{ id: "burger_king", time: t(0, 5) },
+			{ id: "furniture_store", time: t(0, 5) }
+		]
+	},
+	bus_stop_grand_street: {
+		title: "Bus Stop on Grand Street",
+		image: {
+			day: "bus_stop.png",
+		},
+		emoji: "🚌",
+		descriptions: [
+			"You are at bus stop on Grand Street.",
+			"This is a bus stop on Grand Street."
+		]
+	},
+	furniture_store: {
+		title: "Furniture Store",
+		image: {
+			day: "furniture_store.png",
+		},
+		emoji: "🛋️",
+		descriptions: [
+			"This place appears to be a furniture store.",
+			"You are in furniture store right now."
 		]
 	},
 	burger_king: {

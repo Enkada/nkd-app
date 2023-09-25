@@ -3,6 +3,7 @@ import { DOW, GetRecordWithIds, isBetween, t } from "../Utils";
 export type Character = {
 	id: string,
     name: string;
+    image?: Record<string, string[]>;
     availability?: (time: number, dayOfTheWeek: number) => string | null;
     actions?: string[];
     greetings: string[];
@@ -19,6 +20,10 @@ const defaultGreetings = [
 export const _CHARACTERS: Record<string, _Character> = {
     sara: {
         name: "Sara",
+        image: {
+            cardigan: ['college'],
+            camisole: ['home']
+        },
         availability: (time: number, dayOfTheWeek: number): string | null => {
             switch (true) {
                 case isBetween(dayOfTheWeek, DOW.Monday, DOW.Friday):

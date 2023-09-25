@@ -16,6 +16,7 @@ export enum DOW {
 }
 
 export function isBetween(x: number, min: number, max: number): boolean {
+	x = x % (24 * 60);
     return x >= min && x <= max;
 }
 
