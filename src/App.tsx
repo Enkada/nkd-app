@@ -12,6 +12,7 @@ import { Content } from './components/Content';
 import { NotificationList } from './components/NotificationList';
 import { ImagePreload } from './components/ImagePreload';
 import { Map } from './components/Map';
+import { ActionEditor } from './components/ActionEditor';
 
 export const energyLossMultiplier = 8;
 export const foodLossMultiplier = 6;
@@ -96,6 +97,7 @@ function App() {
 	const [isStorageOpen, setIsStorageOpen] = useState(false);
 	const [isWaitMenuOpen, setIsWaitMenuOpen] = useState(false);
 	const [isMapOpen, setIsMapOpen] = useState(false);
+	const [isActionEditorOpen, setIsActionEditorOpen] = useState(false);
 	const [waitValue, setWaitValue] = useState(5);
 	const [notifications, setNotifications] = useState<string[]>([]);
 	const [gameOverMessage, setGameOverMessage] = useState("");
@@ -354,6 +356,7 @@ function App() {
 	
 	return (
 		<div className="game">
+			{!!isActionEditorOpen && <ActionEditor/>}
 			{!!isMapOpen && <DraggableWindow className="map resize" title='🗺️ Map' onClose={() => setIsMapOpen(false)}>
 				<div className="map__wrapper">
 					<Map location={location}/>

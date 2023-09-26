@@ -51,8 +51,8 @@ export const Map = ({
                 .links(links)
                 .distance((d) => d.distance)
             )
-            .force('charge', d3.forceManyBody().strength(-150))
-            .force('center', d3.forceCenter(width / 2 + 180, height / 2 - 300))
+            .force('charge', d3.forceManyBody().strength(-150).distanceMax(200))
+            .force('center', d3.forceCenter(width / 2 + 170, height / 2 - 310))
 
         const svg = d3.select(svgRef.current);
 

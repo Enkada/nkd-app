@@ -6,7 +6,7 @@ export type Action = {
 	emoji?: string,
 	returnEmoji?: string,
 	returnText?: string,
-	returnToStart?: boolean,
+	returnToStart?: boolean, // unused
 	hideReturn?: boolean,
 	time?: number,
 	text: string[],
@@ -169,19 +169,6 @@ const _ACTIONS: Record<string, _Action> = {
 			'Archive note 2.',
 		],
 		actions: ["sara_examine_look", "sara_examine_character"]
-	},
-	college_medical_checkup: {
-		text: [
-			'You notice students standing in line at the infirmary.',
-		],
-		actions: ["sara_examine_look"], returnText: "Don't care"
-	},
-	college_medical_checkup_check: {
-		title: "Check infirmary", emoji: "🩺",
-		text: [
-			'college_medical_checkup_yes PLACEHOLDER',
-		],
-		actions: ["sara_examine_look"], returnText: "Don't care"
 	},
 	sara_examine_look: {
 		title: "Her look", emoji: "👀",

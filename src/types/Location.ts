@@ -12,6 +12,7 @@ export type Location = {
 	title: string,
 	image: LocationBackgroundPeriods,
 	emoji: string,
+	hue?: number,
 	descriptions?: string[],
 	actions?: (string | ConditionalAction)[],
 	children?: LocationPath[],
@@ -143,7 +144,7 @@ const _LOCATIONS: Record<string, _Location> = {
 			day: "convenience_store.jpg",
 		},
 		emoji: "🏪",
-		shop: SHOPS.grocery,
+		shop: SHOPS.convenience_store,
 		descriptions: [
 			"This place appears to be a convenience store.",
 			"You are in convenience store right now."
@@ -169,7 +170,7 @@ const _LOCATIONS: Record<string, _Location> = {
 		image: {
 			day: "bus_stop.png",
 		},
-		emoji: "🚌",
+		emoji: "🚌", hue: 260,
 		descriptions: [
 			"You are at bus stop on Bright Street.",
 			"This is a bus stop on Bright Street."
@@ -190,7 +191,8 @@ const _LOCATIONS: Record<string, _Location> = {
 		],
 		children: [
 			{ id: "bus_stop_grand_street", time: t(0, 5) },
-			{ id: "department_store", time: t(0, 5) }
+			{ id: "department_store", time: t(0, 5) },
+			{ id: "burger_king", time: t(0, 5) },
 		]
 	},
 	department_store: {
@@ -204,7 +206,6 @@ const _LOCATIONS: Record<string, _Location> = {
 			"You are in department store right now."
 		],
 		children: [
-			{ id: "burger_king", time: t(0, 5) },
 			{ id: "furniture_store", time: t(0, 5) }
 		]
 	},
@@ -213,7 +214,7 @@ const _LOCATIONS: Record<string, _Location> = {
 		image: {
 			day: "bus_stop.png",
 		},
-		emoji: "🚌",
+		emoji: "🚌", hue: 180,
 		descriptions: [
 			"You are at bus stop on Grand Street.",
 			"This is a bus stop on Grand Street."
@@ -225,6 +226,7 @@ const _LOCATIONS: Record<string, _Location> = {
 			day: "furniture_store.png",
 		},
 		emoji: "🛋️",
+		shop: SHOPS.furniture_store,
 		descriptions: [
 			"This place appears to be a furniture store.",
 			"You are in furniture store right now."

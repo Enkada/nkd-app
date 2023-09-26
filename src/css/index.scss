@@ -1,6 +1,7 @@
 @import "animations";
 @import "pc";
 @import "map";
+@import "action_editor";
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
 
@@ -63,7 +64,7 @@ body {
     background: var(--clr-border);
 }
 
-input {    
+input, textarea {    
     outline: none;
     font-family: var(--font-family);
     color: var(--clr-text);
@@ -164,6 +165,7 @@ button {
         .emoji {
             text-shadow: none;
             font-family: var(--font-family-emoji);
+            filter: hue-rotate(var(--hue));
         }
     }
 
@@ -427,8 +429,8 @@ button {
         display: grid;
         grid-template-rows: max-content auto;
         z-index: 2000;
-        width: 700px;
-        height: 600px;
+        width: 600px;
+        height: 500px;
         left: 50%;
         top: 50%;
         translate: -50% -50%;
@@ -684,6 +686,14 @@ button {
     }
 }
 
+.link.location.bus-stop + .link.location:not(.bus-stop)  {
+    margin-top: 1em;
+}
+
+.link.location.bus-stop:only-child {
+    margin-bottom: -1em;
+}
+
 .link-list {
     display: grid;
 
@@ -702,6 +712,8 @@ button {
         opacity: 0;
         animation: linkItem .3s ease forwards;
         animation-delay: calc(var(--index) * .05s + .05s);
+
+        
 
         &:not(.ignored) {
             cursor: pointer;
@@ -727,6 +739,7 @@ button {
 
         &__emoji {
             font-family: var(--font-family-emoji);
+            filter: hue-rotate(var(--hue));
         }
 
         &__title {
@@ -738,4 +751,3 @@ button {
         }
     }
 }
-

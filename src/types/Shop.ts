@@ -13,7 +13,7 @@ const priceMultiplier = 2;
 const price = (value: number) => value * priceMultiplier;
 
 const _SHOPS: Record<string, _Shop> = {
-    grocery: {
+    convenience_store: {
         items: [
             {
                 item: ITEMS.hotdog,
@@ -39,10 +39,7 @@ const _SHOPS: Record<string, _Shop> = {
                 item: ITEMS.pizza,
                 price: price(5)
             },
-            {
-                item: ITEMS.mattress,
-                price: price(10)
-            }
+            
         ]
     },
     burger_king: {
@@ -54,6 +51,14 @@ const _SHOPS: Record<string, _Shop> = {
             {
                 item: ITEMS.fries,
                 price: price(1.5)
+            }
+        ]
+    },
+    furniture_store: {
+        items: [
+            {
+                item: ITEMS.mattress,
+                price: price(10)
             }
         ]
     }

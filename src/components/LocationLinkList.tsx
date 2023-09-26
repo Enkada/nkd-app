@@ -21,8 +21,8 @@ export const LocationLinkList = ({
 			}
 
 			return (
-				<div key={location.id} className={`link location ${unavailability ? "ignored" : ""}`} onClick={unavailability ? () => { } : () => handleLocationChange(locationPath)} style={{ "--index": initialIndex + index } as React.CSSProperties}>
-					<div className="link__emoji">{location.emoji}</div>
+				<div key={location.id} className={`link location ${unavailability ? "ignored" : ""} ${location.id.includes('bus_stop') ? "bus-stop" : ""}`} onClick={unavailability ? () => { } : () => handleLocationChange(locationPath)} style={{ "--index": initialIndex + index } as React.CSSProperties}>
+					<div className="link__emoji" style={location.hue ? { "--hue": location.hue + 'deg' } as React.CSSProperties : {}}>{location.emoji}</div>
 					<div className="link__title">{location.title}</div>
 					{!!(locationPath.time > 0) && <div className="link__time">({unavailability ? unavailability.short : timeToString(locationPath.time)})</div>}
 				</div>
