@@ -1,4 +1,5 @@
 import seedrandom from 'seedrandom';
+import { Stat } from './App';
 
 export const timeToString = (time: number) => {
 	return `${Math.floor(time / 60)}:${(time % 60).toString().padStart(2, '0')}`;
@@ -13,6 +14,56 @@ export enum DOW {
     Friday,
     Saturday,
     Sunday
+}
+
+export type Reason = {
+	short: string,
+	full: string[]
+}
+
+export type Condition = {
+	isNegative?: boolean,
+	time?: {
+		from: number,
+		to: number
+	},
+	eval?: string,
+	dayOfTheWeek?: number[],
+	reason?: Reason,
+	location?: string,
+}
+
+export const checkConditions = (conditions: Condition[] | undefined, stat: Stat, breakAfterPass: boolean = false) => {
+	const { time, day, variables } = stat;
+
+	if (conditions) {
+		let reason: Reason | null | undefined = undefined;
+		let location: string | null | undefined = undefined;
+		for (const condition of conditions) {
+			let pass = true;
+			if (condition.eval) {
+				pass = eval(condition.eval);
+			}
+			if (condition.time && !isBetween(time, condition.time.from, condition.time.to)) {
+				pass = false;
+			}
+			if (condition.dayOfTheWeek && !condition.dayOfTheWeek.some(x => getDayOfTheWeek(getDate(day)) == x)) {
+				pass = false;
+			}
+
+			if (condition.isNegative) {
+				pass = !pass;
+			}
+
+			if (!pass && !breakAfterPass || pass && breakAfterPass) {
+				reason = condition.reason ?? null;
+				location = condition.location ?? null;
+				break;
+			}
+		}
+		return {reason, location};
+	}
+	return undefined;
 }
 
 export function isBetween(x: number, min: number, max: number): boolean {

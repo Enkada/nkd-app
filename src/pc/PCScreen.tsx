@@ -171,9 +171,7 @@ const Explorer = ({
     </Draggable>)
 }
 
-export const PCScreen = ({
-    handlePCExit
-}: {
+export const PCScreen = ({ handlePCExit }: {
     handlePCExit: () => void
 }) => {
 
@@ -206,7 +204,17 @@ export const PCScreen = ({
                     <AppIcon emoji='👩🏻‍💻' name='Terminal' />
                     <AppIcon emoji='🚪' name='Exit' />
                 </>)}
-                {!!(apps.includes("Browser")) && <Browser setApps={setApps} />}
+                {!!(apps.includes("Browser")) && <Draggable handle='.window__top-bar'>
+                    <div className='window browser'>
+                        <div className="window__top-bar">
+                            <div className="window__top-bar__title">Internet Browser</div>
+                            <div className="window__top-bar__btn-list">
+                                <div className="btn btn-close" onClick={() => setApps(apps => apps.filter(x => x !== 'Browser'))}>X</div>
+                            </div>
+                        </div>
+                        <Browser/>
+                    </div>
+                </Draggable>}
                 {!!(apps.includes("Explorer")) && <Explorer setApps={setApps} setImg={setImg} setTxt={setTxt} />}
                 {!!(apps.includes("Terminal")) && <Terminal root={EXPLORER_ROOT} setApps={setApps} />}
                 {!!img && <ImgViewer img={img} setImg={setImg} />}

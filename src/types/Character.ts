@@ -1,10 +1,11 @@
-import { DOW, GetRecordWithIds, isBetween, t } from "../Utils";
+import { Condition, DOW, GetRecordWithIds, t } from "../Utils";
 
 export type Character = {
 	id: string,
     name: string;
     image?: Record<string, string[]>;
-    availability?: (time: number, dayOfTheWeek: number) => string | null;
+    conditions: Condition[];
+    // availability?: (time: number, dayOfTheWeek: number) => string | null;
     actions?: string[];
     greetings: string[];
 }
@@ -22,51 +23,38 @@ export const _CHARACTERS: Record<string, _Character> = {
         name: "Sara",
         image: {
             cardigan: ['college'],
-            camisole: ['home']
+            camisole: ['sara_home']
         },
-        availability: (time: number, dayOfTheWeek: number): string | null => {
-            switch (true) {
-                case isBetween(dayOfTheWeek, DOW.Monday, DOW.Friday):
-                    if (isBetween(time, t(0, 0), t(7, 59)))
-                        return "home";
-                    if (isBetween(time, t(8, 0), t(15, 59)))
-                        return "college";
-                    if (isBetween(time, t(16, 0), t(24, 0)))
-                        return "home";
-                    break;
-                case isBetween(dayOfTheWeek, DOW.Saturday, DOW.Sunday):
-                    if (isBetween(time, t(0, 0), t(24, 0)))
-                        return "home";
-                    break;
+        conditions: [
+            {
+                time: { from: t(17, 0), to: t(17, 59) },
+                eval: "day == variables.sara_date_day",
+                location: "burger_king"
+            },
+            {
+                dayOfTheWeek: [DOW.Monday, DOW.Tuesday, DOW.Wednesday, DOW.Thursday, DOW.Friday],
+                time: { from: t(0, 0), to: t(7, 59) },
+                location: "sara_home"
+            },
+            {
+                dayOfTheWeek: [DOW.Monday, DOW.Tuesday, DOW.Wednesday, DOW.Thursday, DOW.Friday],
+                time: { from: t(8, 0), to: t(15, 59) },
+                location: "college"
+            },
+            {
+                dayOfTheWeek: [DOW.Monday, DOW.Tuesday, DOW.Wednesday, DOW.Thursday, DOW.Friday],
+                time: { from: t(16, 0), to: t(24, 0) },
+                location: "sara_home"
+            },
+            {
+                dayOfTheWeek: [DOW.Saturday, DOW.Sunday],
+                time: { from: t(0, 0), to: t(24, 0) },
+                location: "sara_home"
             }
-            return null;
-        },
+        ],
         actions: [
             "sara_ask", "sara_examine"
         ],
-        greetings: defaultGreetings
-    },
-    vika: {
-        name: "Vika",
-        availability: (time: number, dayOfTheWeek: number): string | null => {
-            switch (true) {
-                case isBetween(dayOfTheWeek, DOW.Monday, DOW.Friday):
-                    if (isBetween(time, t(13, 0), t(15, 0)))
-                        return "market";
-                    if (isBetween(time, t(15, 0), t(16, 0)))
-                        return "home_street";
-                    break;
-                case isBetween(dayOfTheWeek, DOW.Saturday, DOW.Sunday):
-                    if (isBetween(time, t(12, 0), t(16, 0)))
-                        return "sara_street";
-                    break;
-            }
-            return null;
-        },
-        greetings: defaultGreetings,
-    },
-    milana: {
-        name: "Milana",
         greetings: defaultGreetings
     },
 };

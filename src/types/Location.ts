@@ -1,5 +1,5 @@
 import { ConditionalAction } from "./Action"
-import { DOW, GetRecordWithIds, isBetween, t } from "../Utils"
+import { Condition, DOW, GetRecordWithIds, t } from "../Utils"
 import { SHOPS, Shop } from "./Shop"
 
 export type LocationPath = {
@@ -17,21 +17,12 @@ export type Location = {
 	actions?: (string | ConditionalAction)[],
 	children?: LocationPath[],
 	shop?: Shop,
-	unavailability?: (time: number, dayOfTheWeek: number) => Reason | null;
+	conditions?: Condition[]
 }
+
+
 
 type _Location = Omit<Location, 'id'>
-
-export type Reason = {
-	short: string,
-	full: string[]
-}
-
-type UnavailabilityPeriod = {
-    from: number;
-    to: number;
-    reason: Reason
-}
 
 export type LocationBackgroundPeriods = {
 	day: string,
@@ -39,23 +30,84 @@ export type LocationBackgroundPeriods = {
 	twilight?: string
 }
 
-const checkUnavailability = (time: number, periods: UnavailabilityPeriod[]): Reason | null => {
-	for (let index = 0; index < periods.length; index++) {
-		const period = periods[index];
-		
-		if (isBetween(time, period.from, period.to - 1)) {
-			return period.reason;
-		}
-	}
-
-	return null;
-}
-
 const _LOCATIONS: Record<string, _Location> = {
-	home: {
-		title: "Your home",
+	your_home: {
+		title: "Your Home",
 		image: {
-			day: "home.jpg"
+			day: "your_home.png"
+		},
+		emoji: "🚪",
+		descriptions: [
+			"This place appears to be your home.",
+			"You are at your home right now."
+		],
+		children: [
+			{ id: "your_kitchen", time: 0 },
+			{ id: "your_room", time: 0 },
+			{ id: "your_living_room", time: 0 }
+		]
+	},
+	your_room: {
+		title: "Your Room",
+		image: {
+			day: "your_room.png"
+		},
+		actions: [
+			"bed"
+		],
+		emoji: "🗝",
+		descriptions: [
+			"This place appears to be your room.",
+		]
+	},
+	your_living_room: {
+		title: "Living Room",
+		image: {
+			day: "your_living_room.png"
+		},
+		emoji: "🛋",
+		descriptions: [
+			"This place appears to be your living room.",
+		]
+	},
+	your_kitchen: {
+		title: "Kitchen",
+		image: {
+			day: "your_kitchen.png"
+		},
+		emoji: "🍳",
+		descriptions: [
+			"This place appears to be your kitchen.",
+		]
+	},
+	home_street: {
+		title: "Home Street",
+		image: {
+			day: "home_street.jpg"
+		},
+		emoji: "🏠",
+		descriptions: [
+			"This place appears to be a street.",
+		],
+		children: [
+			{ id: "your_home", time: 5 },
+			{ id: "bus_stop_home_street", time: 5 }
+		]
+	},
+	bus_stop_home_street: {
+		title: "Bus Stop on Home Street",
+		image: {
+			day: "bus_stop.png"
+		},
+		emoji: "🚌",
+		children: [
+			{ id: "bus_stop_sara_street", time: 45 }
+		]
+	},
+	sara_home: {
+		title: "Sara's Home",
+		image: {
+			day: "sara_home.jpg"
 		},
 		emoji: "🚪",
 		actions: [
@@ -63,25 +115,25 @@ const _LOCATIONS: Record<string, _Location> = {
 			"bed"
 		],
 		descriptions: [
-			"This place appears to be your home.",
-			"You are at home right now."
+			"This place appears to be home of Sara.",
+			"You are at Sara's home right now."
 		],
 		children: [
-			{ id: "bathroom", time: 0 },
-			{ id: "pc", time: 0 }
+			{ id: "sara_bathroom", time: 0 },
+			{ id: "sara_pc", time: 0 }
 		]
 	},
-	pc: {
+	sara_pc: {
 		title: "PC",
 		image: {
 			day: "pc.jpg",
 		},
 		emoji: "💻",
 	},
-	bathroom: {
-		title: "Your bathroom",
+	sara_bathroom: {
+		title: "Sara's Bathroom",
 		image: {
-			day: "bathroom.jpg"
+			day: "sara_bathroom.jpg"
 		},
 		emoji: "🛁",
 		actions: [
@@ -92,8 +144,8 @@ const _LOCATIONS: Record<string, _Location> = {
 			"You are in your bathroom right now."
 		]
 	},
-	stairwell: {
-		title: "Home Stairwell",
+	sara_stairwell: {
+		title: "Sara's Home Stairwell",
 		image: {
 			day: "stairwell.jpg",
 		},
@@ -102,15 +154,15 @@ const _LOCATIONS: Record<string, _Location> = {
 			"This place appears to be a stairwell.",
 		],
 		children: [
-			{ id: "home", time: 0 }
+			{ id: "sara_home", time: 0 }
 		]
 	},
-	home_street: {
+	sara_street: {
 		title: "Market Street",
 		image: {
-			day: "home_street.jpg",
-			night: "home_street_night.jpg",
-			twilight: "home_street_twilight.jpg"
+			day: "sara_street.jpg",
+			night: "sara_street_night.jpg",
+			twilight: "sara_street_twilight.jpg"
 		},
 		emoji: "🏙",
 		descriptions: [
@@ -118,12 +170,12 @@ const _LOCATIONS: Record<string, _Location> = {
 			"This street is full of local shops."
 		],
 		children: [
-			{ id: "stairwell", time: t(0, 5) },
+			{ id: "sara_stairwell", time: t(0, 5) },
 			{ id: "convenience_store", time: t(0, 5) },
-			{ id: "bus_stop_home_street", time: t(0, 5) }
+			{ id: "bus_stop_sara_street", time: t(0, 5) }
 		]
 	},
-	bus_stop_home_street: {
+	bus_stop_sara_street: {
 		title: "Bus Stop on Market Street",
 		image: {
 			day: "bus_stop.png",
@@ -249,17 +301,18 @@ const _LOCATIONS: Record<string, _Location> = {
 			"You are at local burger king.",
 			"This is where people eat burgers."
 		],
-		unavailability: (time: number): Reason | null => {
-			return checkUnavailability(time, [{
-				from: t(1, 0), to: t(6, 0),
+		conditions: [
+			{
+				isNegative: true,
+				time: { from: t(1, 0), to: t(5, 59) },
 				reason: {
 					short: "closed",
 					full: [
 						"Burger King is closed."
 					]
 				}
-			},]);
-		},
+			}
+		]
 	},
 	college: {
 		title: "College",
@@ -271,38 +324,47 @@ const _LOCATIONS: Record<string, _Location> = {
 			"You are at local college.",
 			"This is where people study."
 		],
-		unavailability: (time: number, dayOfTheWeek: number): Reason | null => {
-			switch (true) {
-				case isBetween(dayOfTheWeek, DOW.Monday, DOW.Friday):
-
-					return checkUnavailability(time, [
-						{
-							from: t(0, 0), to: t(6, 0),
-							reason: {
-								short: "closed",
-								full: [
-									"It is too early to for college to open."
-								]
-							}
-						},
-						{
-							from: t(19, 0), to: t(24, 0),
-							reason: {
-								short: "closed",
-								full: [
-									"It is too late to go to college."
-								]
-							}
-						},
-					]);
-				default: return {
+		conditions: [
+			{
+				eval: "variables.college_pass",
+				reason: {
+					short: "not a student",
+					full: [
+						"You're not a student."
+					]
+				}
+			},
+			{
+				isNegative: true,
+				dayOfTheWeek: [DOW.Saturday, DOW.Sunday],
+				reason: {
 					short: "closed",
 					full: [
 						"It is not school day."
 					]
-				};
+				}
+			},
+			{
+				isNegative: true,
+				time: { from: t(0, 0), to: t(5, 59) },
+				reason: {
+					short: "closed",
+					full: [
+						"It is too early to go to college."
+					]
+				}
+			},
+			{
+				isNegative: true,
+				time: { from: t(19, 0), to: t(24, 0) },
+				reason: {
+					short: "closed",
+					full: [
+						"It is too late to go to college."
+					]
+				}
 			}
-		},
+		]
 	},
 	subway_train: {
 		title: "Subway Train",

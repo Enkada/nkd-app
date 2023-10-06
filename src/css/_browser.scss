@@ -27,13 +27,20 @@
 }
 
 .browser {
-    inset: 15%;
-    transform-origin: top left;
-    background-color: rgba(0, 0, 0, 0.6);
-    position: relative;
 
-    display: grid;
-    grid-template-rows: max-content max-content auto;
+    &.window {
+        inset: 15%;
+        transform-origin: top left;
+        background-color: black;
+        position: relative;
+    
+        display: grid;
+        grid-template-rows: max-content max-content auto;
+
+        &:has(.dating-app) {
+            background-color: white;
+        }
+    }
 
     .browser-link {
         color: rgb(99, 99, 204);
@@ -72,13 +79,15 @@
     }
 
     &__page {
-        background-color: black;      
-        overflow-y: scroll;       
-        position: relative;   
+        // background-color: black;      
+        overflow-y: auto;       
+        display: grid;
+        // position: relative;   
 
         &__body {
-            margin: 10px;
-            position: relative;
+            //margin: 10px;
+            // position: relative;
+            height: inherit;
 
             * {
                 margin: revert;
@@ -91,7 +100,7 @@
             }
 
             .home-page {
-                width: 400px;
+                //width: 400px;
                 text-align: center;
                 margin: auto;
                 margin-top: 2em;
@@ -183,9 +192,7 @@
             }
 
             .sara-page {
-                margin: auto;
-                max-width: 640px;
-
+                margin-inline: 1em;
                 line-height: 1.2;
 
                 .intro {

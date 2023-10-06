@@ -12,7 +12,7 @@ export const ImagePreload = ({ setIsLoading }: {
     };
 
     useEffect(() => {
-        console.log(loadedImages, images.length);
+        //console.log(loadedImages, images.length);
         if (loadedImages === images.length) {
             setIsLoading(false);
         }

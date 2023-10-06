@@ -36,6 +36,42 @@
     }
 }
 
+@keyframes arriveFromRight {
+    0% {
+        translate: 50% 0;
+    }
+    100% {
+        translate: 0 0;
+    }
+}
+
+@keyframes chatAlert {
+    0% {
+        scale: 0;
+    }
+    50% {
+        scale: 1.5;
+    }
+    100% {
+        scale: 1;
+    }
+}
+
+@keyframes chatAlertInfinite {
+    0% {
+        rotate: z 0deg;
+    }
+    33% {
+        rotate: z -10deg;
+    }
+    66% {
+        rotate: z 10deg;
+    }
+    100% {
+        rotate: z 0deg;
+    }
+}
+
 @keyframes linkItem {
     0% {
         opacity: 0;
@@ -44,5 +80,20 @@
     100% {
         opacity: 1;
         translate: 0px 0;
+    }
+}
+
+@keyframes chatTyping {
+    0% {
+        content: "";
+    }
+    33% {
+        content: ".";
+    }
+    66% {
+        content: "..";
+    }
+    100% {
+        content: "...";
     }
 }

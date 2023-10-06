@@ -1,5 +1,4 @@
 import React, { useEffect, useState, ReactNode } from 'react'
-import Draggable from 'react-draggable'
 import { Inst } from './Inst';
 import { Sara } from './Sara';
 import { CharacterAI } from './CharacterAI';
@@ -16,11 +15,7 @@ export const BrowserLink = ({
     return <div className='browser-link' onClick={() => handleLinkClick(url)}>{children}</div>
 }
 
-export const Browser = ({
-    setApps,
-}: {
-    setApps: React.Dispatch<React.SetStateAction<string[]>>,
-}) => {
+export const Browser = () => {
     const [url, setUrl] = useState("browser:homepage");
     const [page, setPage] = useState(<div>Loading</div>);
 
@@ -82,30 +77,22 @@ export const Browser = ({
     }
 
 
-    return (<Draggable handle='.window__top-bar'>
-        <div className='window browser'>
-            <div className="window__top-bar">
-                <div className="window__top-bar__title">Internet Browser</div>
-                <div className="window__top-bar__btn-list">
-                    <div className="btn btn-close" onClick={() => setApps(apps => apps.filter(x => x !== 'Browser'))}>X</div>
-                </div>
-            </div>
-            <div className="browser__tool-bar">
-                <BrowserLink handleLinkClick={handleLinkClick} url="browser:homepage">🏠</BrowserLink>
-                <input
-                    type='text'
-                    className="browser__url"
-                    value={url}
-                    onChange={(e) => setUrl(e.target.value)}
-                    onKeyUp={handleKeyPress}
-                />
-            </div>
+    return (<>
+        <div className="browser__tool-bar">
+            <BrowserLink handleLinkClick={handleLinkClick} url="browser:homepage">🏠</BrowserLink>
+            <input
+                type='text'
+                className="browser__url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                onKeyUp={handleKeyPress}
+            />
+        </div>
 
-            <div className="browser__page">
-                <div className="browser__page__body">
-                    {page}
-                </div>
+        <div className="browser__page">
+            <div className="browser__page__body">
+                {page}
             </div>
         </div>
-    </Draggable>)
+    </>)
 }

@@ -268,7 +268,9 @@ export const ActionEditor = () => {
             return `time: t(${Math.floor(time / 60)}, ${time % 60})`;
         }
 
-        return "const _ACTIONS: Record<string, _Action> = " +
+        return `import { t } from "../Utils";\n` +
+            `import { Action } from "./Action";\n\n` +
+            `export const _ACTIONS: Record<string, Omit<Action, 'id'>> = ` +
             JSON.stringify(actionsWithoutIds, null, 4)
                 .replace(/\s{4}"(.*?)":\s/g, '    $1: ')
                 .replace(/time: (\d+)/g, fixTime);

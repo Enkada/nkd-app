@@ -1,4 +1,4 @@
-import { t, getRandom, rand, isBetween, randPow, getDayOfTheWeek, getDate, formatText } from '../Utils';
+import { t, getRandom, rand, isBetween, randPow, formatText, checkConditions } from '../Utils';
 import { LocationPath, LOCATIONS } from '../types/Location';
 import { Action } from '../types/Action';
 import { Character, CHARACTERS } from '../types/Character';
@@ -8,6 +8,7 @@ import { CharacterLinkList } from './CharacterLinkList';
 import { ActionLinkList } from './ActionLinkList';
 import { ShopItemList } from './ShopItemList';
 import { Stat, SetStat } from '../App';
+import { BusLinkList } from './BusLinkList';
 
 export const Content = ({
 	stat, setStat, handleAction, handleCharacterSelect, handleItemPurchase, handleLocationChange, handleActionOnce
@@ -22,7 +23,7 @@ export const Content = ({
 }) => {
 
 	const {
-		location, action, character, day, time, storages
+		location, action, character, time, storages
 	} = stat;
 
 	const {
@@ -136,7 +137,7 @@ export const Content = ({
 		let index = 0;
 		const extra: JSX.Element[] = [];
 
-		const characters = Object.values(CHARACTERS).filter(x => x.availability && x.availability(time, getDayOfTheWeek(getDate(stat.day))) == location.id);
+		const characters = Object.values(CHARACTERS).filter(x => checkConditions(x.conditions, stat, true)?.location == location.id);
 
 		let children: LocationPath[] = location.children ? [...location.children] : [];
 		let parents = Object.entries(LOCATIONS).reduce<LocationPath[]>((parentLocations, [key, value]) => {
@@ -150,16 +151,17 @@ export const Content = ({
 			return parentLocations;
 		}, []);
 
+		let busStops = location.id.startsWith("bus_stop_") ? parents.concat(children).filter(x => x.id.startsWith("bus_stop_")) : [];
+
 		let actions = [...(location.actions || [])];
 
 		// Combine parents and chilren - locations - and check if they are unavailable
 		parents.concat(children).forEach(locationPath => {
 			const location = LOCATIONS[locationPath.id];
-			if (location.unavailability) {
-				const isUnavailable = location.unavailability(time, getDayOfTheWeek(getDate(day)));
-				if (isUnavailable !== null) {
-					unavailability.push(getRandom(isUnavailable.full));
-				}
+			const unavailabilityReason = checkConditions(location.conditions, stat)?.reason;
+
+			if (unavailabilityReason) {
+				unavailability.push(getRandom(unavailabilityReason.full));
 			}
 		});
 
@@ -167,13 +169,13 @@ export const Content = ({
 			case "subway":
 				characters.push(CHARACTERS.sara);
 				break;
-			case "home":
+			case "sara_home":
 				if (!storages.home.find(x => x.id === "mattress")) {
 					actions = actions.filter(x => x != "bed");
 				}
 				if (characters.find(x => x.name == "Sara") && !isBetween(time, t(2, 0), t(7, 30))) {
 					actions = actions.filter(x => x != "work_freelance");
-					children = children.filter(x => x.id != "pc");
+					children = children.filter(x => x.id != "sara_pc");
 
 					extra.push(createContentLine([
 						'Sara is using the laptop.',
@@ -191,8 +193,9 @@ export const Content = ({
 				</div>}
 				{!!characters.length && <CharacterLinkList characters={characters} handleCharacterSelect={handleCharacterSelect} />}
 				{!!actions.length && <ActionLinkList actions={actions} initialIndex={characters.length} handleAction={handleAction} stat={stat} />}
-				{!!children.length && <LocationLinkList paths={children} stat={stat} initialIndex={(actions.length || 0) + characters.length} handleLocationChange={handleLocationChange} />}
-				{!!parents.length && <LocationLinkList paths={parents} stat={stat} initialIndex={(children.length || 0) + (actions.length || 0) + characters.length} handleLocationChange={handleLocationChange} />}
+				{!!busStops.length && <BusLinkList paths={busStops} handleLocationChange={handleLocationChange} initialIndex={characters.length + actions.length}/>}
+				{!!children.length && <LocationLinkList paths={children} stat={stat} initialIndex={actions.length + characters.length + busStops.length} handleLocationChange={handleLocationChange} />}
+				{!!parents.length && <LocationLinkList paths={parents} stat={stat} initialIndex={actions.length + characters.length + busStops.length + children.length} handleLocationChange={handleLocationChange} />}
 				{!!location.shop && <ShopItemList stat={stat} handleItemClick={handleItemPurchase} shop={location.shop} />}
 			</>
 		);

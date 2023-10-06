@@ -22,6 +22,13 @@ export const Map = ({
     const data = Object.values(LOCATIONS);
     const svgRef = useRef<SVGSVGElement>(null);
 
+    const strength = -30;
+    //const distanceMax = 200;
+    const offsetX = -20;
+    const offsetY = 20;
+    const minDistance = 20;
+    const distanceMultiplier = 5;
+
     useEffect(() => {
         if (!svgRef.current) return;
 
@@ -39,7 +46,7 @@ export const Map = ({
             (location.children || []).map((child) => ({
                 source: location.id,
                 target: child.id,
-                distance: 20 + child.time * 5,
+                distance: minDistance + child.time * distanceMultiplier,
                 time: child.time
             }))
         );
@@ -51,8 +58,8 @@ export const Map = ({
                 .links(links)
                 .distance((d) => d.distance)
             )
-            .force('charge', d3.forceManyBody().strength(-150).distanceMax(200))
-            .force('center', d3.forceCenter(width / 2 + 170, height / 2 - 310))
+            .force('charge', d3.forceManyBody().strength(strength))
+            .force('center', d3.forceCenter(width / 2 + offsetX, height / 2 - offsetY))
 
         const svg = d3.select(svgRef.current);
 

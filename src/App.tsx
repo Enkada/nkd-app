@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { t, getDayOfTheWeek, getDate } from './Utils';
+import { t, checkConditions } from './Utils';
 import { Location, LocationPath, LOCATIONS } from './types/Location';
 import { ACTIONS, Action } from './types/Action';
 import { Character, CHARACTERS } from './types/Character';
@@ -13,6 +13,7 @@ import { NotificationList } from './components/NotificationList';
 import { ImagePreload } from './components/ImagePreload';
 import { Map } from './components/Map';
 import { ActionEditor } from './components/ActionEditor';
+import { Phone } from './phone/Phone';
 
 export const energyLossMultiplier = 8;
 export const foodLossMultiplier = 6;
@@ -38,7 +39,8 @@ export type Stat = {
 	},
 	time: number,
 	storages: Record<string, ItemStorage>,
-	seenActions: string[]
+	seenActions: string[],
+	variables: Record<string, any>
 }
 
 export type SetStat = {
@@ -58,11 +60,12 @@ export type SetStat = {
 	setTime: React.Dispatch<React.SetStateAction<number>>;
 	setStorages: React.Dispatch<React.SetStateAction<Record<string, ItemStorage>>>;
 	setSeenActions: React.Dispatch<React.SetStateAction<string[]>>;
+	setVariables: React.Dispatch<React.SetStateAction<Record<string, any>>>;
 }
 
 // const initialLocation = LOCATIONS.subway_train;
 // const initialAction = ACTIONS.intro_0;
-const initialLocation = LOCATIONS.home;
+const initialLocation = LOCATIONS.your_home;
 const initialAction = null;
 
 function App() {
@@ -77,13 +80,13 @@ function App() {
 		sara: { current: 90, max: 100 },
 		self: { current: 90, max: 100 }
 	})
-	const [time, setTime] = useState(t(8, 0));
+	const [time, setTime] = useState(t(17, 40));
 	const [storages, setStorages] = useState<Record<string, ItemStorage>>({
 		self: [
 			{...ITEMS.sandwich, count: 1}, 
 			{...ITEMS.apple, count: 3}
 		],
-		home: [
+		sara_home: [
 			{...ITEMS.sandwich, count: 2}, 
 			{...ITEMS.apple, count: 5},
 			{...ITEMS.cookie, count: 10},
@@ -91,6 +94,9 @@ function App() {
 		college: [{...ITEMS.canteen_lunch, count: 99999}],
 	});	
 	const [seenActions, setSeenActions] = useState<string[]>([]);
+	const [variables, setVariables] = useState<Record<string, any>>({
+		college_pass: false,
+	});
 
 	const [isLoading, setIsLoading] = useState(true);
 	const [isInventoryOpen, setIsInventoryOpen] = useState(false);
@@ -98,6 +104,7 @@ function App() {
 	const [isWaitMenuOpen, setIsWaitMenuOpen] = useState(false);
 	const [isMapOpen, setIsMapOpen] = useState(false);
 	const [isActionEditorOpen, setIsActionEditorOpen] = useState(false);
+	const [isPhoneOpen, setIsPhoneOpen] = useState(false);
 	const [waitValue, setWaitValue] = useState(5);
 	const [notifications, setNotifications] = useState<string[]>([]);
 	const [gameOverMessage, setGameOverMessage] = useState("");
@@ -113,6 +120,7 @@ function App() {
 		time: time,
 		storages: storages,
 		seenActions: seenActions,
+		variables: variables
 	}
 
 	const setStat: SetStat = {
@@ -125,7 +133,8 @@ function App() {
 		setFood: setFood,
 		setTime: setTime,
 		setStorages: setStorages,
-		setSeenActions: setSeenActions
+		setSeenActions: setSeenActions,
+		setVariables: setVariables
 	}
 
 	const [showPCScreen, setShowPCScreen] = useState(false);
@@ -153,8 +162,9 @@ function App() {
 	}
 
 	const handleTimeChange = (minutes: number, isRest?: boolean) => {
-		const saraLocation = CHARACTERS.sara.availability ? CHARACTERS.sara.availability(time, getDayOfTheWeek(getDate(day))) : "";
-		
+		const saraLocation = checkConditions(CHARACTERS.sara.conditions, stat, true)?.location ?? "void";
+		console.log(saraLocation);
+
 		setTime(prev => prev + minutes);		
 
 		const foodLoss = isRest ? -Math.floor(minutes / (foodLossMultiplier + 4)) : -Math.floor(minutes / foodLossMultiplier);
@@ -356,6 +366,7 @@ function App() {
 	
 	return (
 		<div className="game">
+			{!!isPhoneOpen && <Phone stat={stat} setStat={setStat}/>}
 			{!!isActionEditorOpen && <ActionEditor/>}
 			{!!isMapOpen && <DraggableWindow className="map resize" title='🗺️ Map' onClose={() => setIsMapOpen(false)}>
 				<div className="map__wrapper">
@@ -366,9 +377,10 @@ function App() {
 			<Background stat={stat}/>
 			<InfoBar stat={stat}/>
 			<div className="menu">
-				{!!(action === null && character === null && energy.current > 0) && <div className="btn" data-title="Wait" onClick={() => setIsWaitMenuOpen(!isWaitMenuOpen)}>⏳</div>}
+				<div className="btn" data-title='Phone' onClick={() => setIsPhoneOpen(!isPhoneOpen)}>📱</div>
 				<div className="btn" data-title='Inventory' onClick={() => setIsInventoryOpen(!isInventoryOpen)}>💼</div>
 				<div className="btn" data-title='Map' onClick={() => setIsMapOpen(!isMapOpen)}>🗺️</div>
+				{!!(action === null && character === null && energy.current > 0) && <div className="btn" data-title="Wait" onClick={() => setIsWaitMenuOpen(!isWaitMenuOpen)}>⏳</div>}
 				{!!(Object.keys(storages).includes(location.id)) && <div className="btn" data-title={`${location.title} Storage`} onClick={() => setIsStorageOpen(!isStorageOpen)}>📦</div>}
 			</div>
 			<NotificationList notifications={notifications}/>
@@ -408,7 +420,7 @@ function App() {
 				))}
 				</div>
 			</DraggableWindow>}
-			{showPCScreen ? <PCScreen handlePCExit={handlePCExit} /> :
+			{showPCScreen ? <PCScreen handlePCExit={handlePCExit}/> :
 			<div className="content-wrapper">
 				{!!character && 
 				<img 
