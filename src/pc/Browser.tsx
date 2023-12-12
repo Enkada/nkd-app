@@ -60,6 +60,7 @@ export const Browser = () => {
                     <p>Version 0 (as for 24.09.23)</p>
                     <p>TODO List:</p>
                     <ul>
+                        <li>Colorable clothing</li>
                         <li>Bettter Return in actions (?)</li>
                         <li>More animation</li>
                     </ul>

@@ -111,6 +111,10 @@ export const getDayOfTheWeek = (date: Date): number => {
 	return day === 0 ? 6 : day;
 }
 
+export const formatMoney = (money: number): string => {
+	return money.toFixed(2).replace('.00', '').replace('-0', '0')
+}
+
 export const formatText = (text: string): string => {
 	text = text.replace(/a: (.*)/g, '<span class="line self-line">$1</span>');
 	text = text.replace(/b: (.*)/g, '<span class="line character-line">$1</span>');

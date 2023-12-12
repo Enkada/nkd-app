@@ -1,5 +1,5 @@
 import { Stat } from '../App'
-import { getDate, timeToString } from '../Utils'
+import { formatMoney, getDate, timeToString } from '../Utils'
 
 export const InfoBar = ({
     stat
@@ -7,7 +7,7 @@ export const InfoBar = ({
     stat: Stat
 }) => {
 
-    const { location, money, energy, food, time, day } = stat;
+    const { location, money, energy, food, time, day, variables } = stat;
 
     return (
         <div className="info-bar">
@@ -15,7 +15,7 @@ export const InfoBar = ({
                 <div className="stat date" title={`Day ${day}`}>{getDate(day).toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' })}</div>
                 <div className="stat money">
                     <span className='emoji'>💳</span>
-                    <span className='money__value'>{money.toFixed(2).replace('.00', '').replace('-0', '0')} $</span>
+                    <span className='money__value'>{formatMoney(money)} $</span>
                 </div>
                 <div className="stat energy progress">
                     <span className='emoji'>⚡</span>
@@ -25,10 +25,10 @@ export const InfoBar = ({
                     <span className='emoji'>🍔</span>
                     <progress max={food.self.max} value={food.self.current} />
                 </div>
-                <div className="stat food progress">
+                {!!variables.living_together && <div className="stat food progress">
                     <span className='emoji'>👧🏻</span>
                     <progress max={food.sara.max} value={food.sara.current} />
-                </div>
+                </div>}
             </div>
             <div className="stat time">{timeToString(time)}</div>
             <div className="stat location">

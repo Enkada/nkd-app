@@ -14,6 +14,7 @@ import { ImagePreload } from './components/ImagePreload';
 import { Map } from './components/Map';
 import { ActionEditor } from './components/ActionEditor';
 import { Phone } from './phone/Phone';
+import { SaveLoad } from './components/SaveLoad';
 
 export const energyLossMultiplier = 8;
 export const foodLossMultiplier = 6;
@@ -27,12 +28,12 @@ export type Stat = {
 	location: Location;
 	action: Action | null;
 	character: Character | null;
-    day: number;
-    money: number;
-    energy: {
-        current: number;
-        max: number;
-    },
+	day: number;
+	money: number;
+	energy: {
+		current: number;
+		max: number;
+	},
 	food: {
 		sara: ProgressBar,
 		self: ProgressBar
@@ -44,9 +45,9 @@ export type Stat = {
 }
 
 export type SetStat = {
-    setLocation: React.Dispatch<React.SetStateAction<Location>>;
-    setAction: React.Dispatch<React.SetStateAction<Action | null>>;
-    setCharacter: React.Dispatch<React.SetStateAction<Character | null>>;
+	setLocation: React.Dispatch<React.SetStateAction<Location>>;
+	setAction: React.Dispatch<React.SetStateAction<Action | null>>;
+	setCharacter: React.Dispatch<React.SetStateAction<Character | null>>;
 	setDay: React.Dispatch<React.SetStateAction<number>>;
 	setMoney: React.Dispatch<React.SetStateAction<number>>;
 	setEnergy: React.Dispatch<React.SetStateAction<{
@@ -83,22 +84,24 @@ function App() {
 	const [time, setTime] = useState(t(17, 40));
 	const [storages, setStorages] = useState<Record<string, ItemStorage>>({
 		self: [
-			{...ITEMS.sandwich, count: 1}, 
-			{...ITEMS.apple, count: 3}
+			{ ...ITEMS.sandwich, count: 1 },
+			{ ...ITEMS.apple, count: 3 }
 		],
 		sara_home: [
-			{...ITEMS.sandwich, count: 2}, 
-			{...ITEMS.apple, count: 5},
-			{...ITEMS.cookie, count: 10},
+			{ ...ITEMS.sandwich, count: 2 },
+			{ ...ITEMS.apple, count: 5 },
+			{ ...ITEMS.cookie, count: 10 },
 		],
-		college: [{...ITEMS.canteen_lunch, count: 99999}],
-	});	
+		college: [{ ...ITEMS.canteen_lunch, count: 99999 }],
+	});
 	const [seenActions, setSeenActions] = useState<string[]>([]);
 	const [variables, setVariables] = useState<Record<string, any>>({
 		college_pass: false,
+		living_together: false
 	});
 
 	const [isLoading, setIsLoading] = useState(true);
+	const [isSaveLoadOpen, setIsSaveLoadOpen] = useState(false);
 	const [isInventoryOpen, setIsInventoryOpen] = useState(false);
 	const [isStorageOpen, setIsStorageOpen] = useState(false);
 	const [isWaitMenuOpen, setIsWaitMenuOpen] = useState(false);
@@ -161,11 +164,8 @@ function App() {
 		setCharacter(character);
 	}
 
-	const handleTimeChange = (minutes: number, isRest?: boolean) => {
+	const handleSaraTimeChange = (minutes: number, isRest?: boolean) => {
 		const saraLocation = checkConditions(CHARACTERS.sara.conditions, stat, true)?.location ?? "void";
-		console.log(saraLocation);
-
-		setTime(prev => prev + minutes);		
 
 		const foodLoss = isRest ? -Math.floor(minutes / (foodLossMultiplier + 4)) : -Math.floor(minutes / foodLossMultiplier);
 
@@ -179,9 +179,9 @@ function App() {
 			while (index != -1 && storage[index] && (food.sara.current + foodLoss + foodGain) <= 50) {
 				if (index == -1 || !storage[index]) break;
 
-				foodGain += storage[index].hunger || 0;				
+				foodGain += storage[index].hunger || 0;
 				showNotification(`Sara ate ${storage[index].emoji} ${storage[index].name}`);
-				
+
 				storage[index].count--;
 
 				if (storage[index].count <= 0) {
@@ -189,16 +189,33 @@ function App() {
 				}
 
 				index = storage.findIndex(x => x.type === "food");
-			};	
-			
+			};
+
 			addFood('sara', foodGain);
 
 			setStorages({ ...storages, [saraLocation]: storage });
 		}
 
+		if (!isRest) {
+			addFood('sara', foodLoss);
+		}
+		else {
+			addFood('sara', foodLoss);
+		}
+	}
+
+	const handleTimeChange = (minutes: number, isRest?: boolean) => {
+		if (variables.living_together) {
+			handleSaraTimeChange(minutes, isRest);
+		}
+
+		setTime(prev => prev + minutes);
+
+		const foodLoss = isRest ? -Math.floor(minutes / (foodLossMultiplier + 4)) : -Math.floor(minutes / foodLossMultiplier);
+
 		if (food.self.current <= 10) showNotification(`⚠️ You are hungry`);
 		if (energy.current <= 5) showNotification(`⚠️ You are exhausted`);
-		
+
 		if (food.sara.current <= -20) setGameOverMessage(`Sara died from hunger`);
 		else if (food.self.current <= -20) setGameOverMessage(`You died of hunger`);
 		else if (energy.current <= -20) setGameOverMessage(`You died from exhaustion`);
@@ -206,12 +223,10 @@ function App() {
 		if (!isRest) {
 			addEnergy(-Math.floor(minutes / energyLossMultiplier));
 			addFood('self', foodLoss);
-			addFood('sara', foodLoss);
 		}
 		else {
 			addEnergy(Math.floor(minutes / (energyLossMultiplier - 2)));
 			addFood('self', foodLoss);
-			addFood('sara', foodLoss);
 		}
 	}
 
@@ -223,7 +238,7 @@ function App() {
 
 	const addEnergy = (value: number) => {
 		setEnergy((prev) => ({
-			...prev, current: Math.min(prev.current + value, prev.max) 
+			...prev, current: Math.min(prev.current + value, prev.max)
 		}));
 	}
 
@@ -237,7 +252,7 @@ function App() {
 
 			setMoney((prev) => prev - (action.cost?.money || 0));
 			setEnergy((prev) => ({
-				...prev, current: Math.min(prev.current - (action.cost?.energy || 0), prev.max) 
+				...prev, current: Math.min(prev.current - (action.cost?.energy || 0), prev.max)
 			}));
 			setFood((prev) => ({
 				...prev, self: { ...prev.self, current: Math.min(prev.self.current - (action.cost?.food || 0), prev.self.max) }
@@ -251,23 +266,23 @@ function App() {
 				handleCharacterSelect(action.character === null ? null : CHARACTERS[action.character]);
 			}
 		}
-	}	
+	}
 
 	const handleActionOnce = (f: () => any) => {
 		if (!action?.isHandled) {
 			// setTimeout is used to prevent race condition between App and Content
 			setTimeout(() => {
 				f();
-				const newAction = {...action};
+				const newAction = { ...action };
 				newAction.isHandled = true;
 				setAction(newAction as Action);
 			}, 0);
 		}
 	}
-	
+
 	const showNotification = (text: string) => {
 		setNotifications((prev) => [...prev, text]);
-	}	
+	}
 
 	const handleItemPurchase = (item: ItemPrice) => {
 		if (money >= (item.price - 0.01)) {
@@ -326,7 +341,7 @@ function App() {
 
 		if (toIndex !== -1) {
 			const newItems = [...toStorage];
-			newItems[toIndex].count++;			
+			newItems[toIndex].count++;
 			setStorages((prev) => ({ ...prev, [to]: newItems }));
 		}
 		else {
@@ -351,9 +366,9 @@ function App() {
 
 	const getCharacterImage = (character: Character) => {
 		let characterImage = character.id;
-		if (character.image) {	
+		if (character.image) {
 			const entry = Object.entries(character.image).find(x => x[1].includes(location.id));
-	
+
 			if (entry) {
 				characterImage = `${character.id}_${entry[0]}`;
 			}
@@ -363,88 +378,94 @@ function App() {
 		}
 		return characterImage;
 	}
-	
+
+	const gameRef = useRef<HTMLDivElement>(null);
+
 	return (
-		<div className="game">
-			{!!isPhoneOpen && <Phone stat={stat} setStat={setStat}/>}
-			{!!isActionEditorOpen && <ActionEditor/>}
+		<div className="game" ref={gameRef}>
+			{!!isSaveLoadOpen && <DraggableWindow className="save-load" title='💾 Save / Load' onClose={() => setIsSaveLoadOpen(false)}>
+				<SaveLoad stat={stat} setStat={setStat} gameRef={gameRef}/>
+			</DraggableWindow>}
+			{!!isPhoneOpen && <Phone stat={stat} setStat={setStat} />}
+			{!!isActionEditorOpen && <ActionEditor />}
 			{!!isMapOpen && <DraggableWindow className="map resize" title='🗺️ Map' onClose={() => setIsMapOpen(false)}>
 				<div className="map__wrapper">
-					<Map location={location}/>
+					<Map location={location} />
 				</div>
 			</DraggableWindow>}
-			<ImagePreload setIsLoading={setIsLoading}/>
-			<Background stat={stat}/>
-			<InfoBar stat={stat}/>
+			<ImagePreload setIsLoading={setIsLoading} />
+			<Background stat={stat} />
+			<InfoBar stat={stat} />
 			<div className="menu">
+				<div className="btn" data-title='Save / Load' onClick={() => setIsSaveLoadOpen(!isSaveLoadOpen)}>💾</div>
 				<div className="btn" data-title='Phone' onClick={() => setIsPhoneOpen(!isPhoneOpen)}>📱</div>
 				<div className="btn" data-title='Inventory' onClick={() => setIsInventoryOpen(!isInventoryOpen)}>💼</div>
 				<div className="btn" data-title='Map' onClick={() => setIsMapOpen(!isMapOpen)}>🗺️</div>
 				{!!(action === null && character === null && energy.current > 0) && <div className="btn" data-title="Wait" onClick={() => setIsWaitMenuOpen(!isWaitMenuOpen)}>⏳</div>}
 				{!!(Object.keys(storages).includes(location.id)) && <div className="btn" data-title={`${location.title} Storage`} onClick={() => setIsStorageOpen(!isStorageOpen)}>📦</div>}
 			</div>
-			<NotificationList notifications={notifications}/>
+			<NotificationList notifications={notifications} />
 			{!!(isWaitMenuOpen && action === null && character === null && energy.current > 0) && <DraggableWindow className='wait' onClose={() => setIsWaitMenuOpen(false)} title={`⏳ Wait`}>
 				<div className="wait__form">
-					<input type="range" value={waitValue} min={1} max={120} onChange={e => setWaitValue(parseInt(e.target.value))}/>
+					<input type="range" value={waitValue} min={1} max={120} onChange={e => setWaitValue(parseInt(e.target.value))} />
 					<div className="wait__value">{waitValue} minute{!!(waitValue !== 1) && "s"}</div>
 					<button onClick={() => handleTimeChange(waitValue)}>Wait</button>
 				</div>
 			</DraggableWindow>}
 			{!!isInventoryOpen && <DraggableWindow className='inventory storage' onClose={() => setIsInventoryOpen(false)} title={`💼 Inventory`}>
 				<div className="storage__item-list">
-				{storages.self.map((item, index) => (
-					<div key={index} className='item'>
-						<div className="item__emoji">{item.emoji}</div>	
-						<div className="item__count">x{item.count}</div>
-						{!!(item.type === "food") && <div className="btn btn-use" onClick={() => handleItemUse(item, "self")}>🍽️</div>}
-						{!!(Object.keys(storages).includes(location.id)) && <div className="btn btn-export" onClick={() => handleExportItem(item, "self", location.id)}>📥</div>}
-					</div>
-				))}
-				</div>
-			</DraggableWindow>}	
-			{!!(isStorageOpen && !!(Object.keys(storages).includes(location.id))) && 
-			<DraggableWindow
-				className='location storage'
-				onClose={() => setIsStorageOpen(false)}
-				title={`📦 ${location.title} Storage`}
-			>
-				<div className="storage__item-list">
-				{(storages[location.id] || []).map((item, index) => (
-					<div key={index} className='item'>
-						<div className="item__emoji">{item.emoji}</div>	
-						<div className="item__count">x{item.count}</div>
-						{!!(item.type === "food") && <div className="btn btn-use" onClick={() => handleItemUse(item, location.id)}>🍽️</div>}
-						<div className="btn btn-export" onClick={() => handleExportItem(item, location.id, "self")}>📤</div>
-					</div>
-				))}
+					{storages.self.map((item, index) => (
+						<div key={index} className='item'>
+							<div className="item__emoji">{item.emoji}</div>
+							<div className="item__count">x{item.count}</div>
+							{!!(item.type === "food") && <div className="btn btn-use" onClick={() => handleItemUse(item, "self")}>🍽️</div>}
+							{!!(Object.keys(storages).includes(location.id)) && <div className="btn btn-export" onClick={() => handleExportItem(item, "self", location.id)}>📥</div>}
+						</div>
+					))}
 				</div>
 			</DraggableWindow>}
-			{showPCScreen ? <PCScreen handlePCExit={handlePCExit}/> :
-			<div className="content-wrapper">
-				{!!character && 
-				<img 
-					className="character" 
-					style={{ shapeOutside: `url(/character/${getCharacterImage(character)}.png)` }} 
-					src={`/character/${getCharacterImage(character)}.png`} 
-				/>}
-				<div className="height-fix" style={{ "--height": contentHeight + "px" } as React.CSSProperties}></div>
-				<div className="content" ref={contentRef}>
-					<Content
-						stat={stat}
-						setStat={setStat}
-						handleAction={handleAction}
-						handleCharacterSelect={handleCharacterSelect}
-						handleItemPurchase={handleItemPurchase}
-						handleLocationChange={handleLocationChange}
-						handleActionOnce={handleActionOnce}
-					/>
-				</div>
-			</div>}
+			{!!(isStorageOpen && !!(Object.keys(storages).includes(location.id))) &&
+				<DraggableWindow
+					className='location storage'
+					onClose={() => setIsStorageOpen(false)}
+					title={`📦 ${location.title} Storage`}
+				>
+					<div className="storage__item-list">
+						{(storages[location.id] || []).map((item, index) => (
+							<div key={index} className='item'>
+								<div className="item__emoji">{item.emoji}</div>
+								<div className="item__count">x{item.count}</div>
+								{!!(item.type === "food") && <div className="btn btn-use" onClick={() => handleItemUse(item, location.id)}>🍽️</div>}
+								<div className="btn btn-export" onClick={() => handleExportItem(item, location.id, "self")}>📤</div>
+							</div>
+						))}
+					</div>
+				</DraggableWindow>}
+			{showPCScreen ? <PCScreen handlePCExit={handlePCExit} /> :
+				<div className="content-wrapper">
+					{!!character &&
+						<img
+							className="character"
+							style={{ shapeOutside: `url(/character/${getCharacterImage(character)}.png)` }}
+							src={`/character/${getCharacterImage(character)}.png`}
+						/>}
+					<div className="height-fix" style={{ "--height": contentHeight + "px" } as React.CSSProperties}></div>
+					<div className="content" ref={contentRef}>
+						<Content
+							stat={stat}
+							setStat={setStat}
+							handleAction={handleAction}
+							handleCharacterSelect={handleCharacterSelect}
+							handleItemPurchase={handleItemPurchase}
+							handleLocationChange={handleLocationChange}
+							handleActionOnce={handleActionOnce}
+						/>
+					</div>
+				</div>}
 			{!!gameOverMessage && <div className="game-over__wrapper">
 				<div className="game-over">
 					<div className="game-over__title">GAME OVER</div>
-					<div className="game-over__message">{gameOverMessage}</div>	
+					<div className="game-over__message">{gameOverMessage}</div>
 				</div>
 			</div>}
 			<div className={`loading ${isLoading ? "loading--active" : "loading--done"}`}>Loading</div>

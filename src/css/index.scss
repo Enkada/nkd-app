@@ -416,6 +416,7 @@ button {
     background-color: var(--clr-bg-t05);
     border: 1px solid var(--clr-border);
     z-index: 1000;
+    will-change: transform;
 
     opacity: 0;
     animation: characterAnimation .3s ease forwards;
@@ -427,6 +428,11 @@ button {
 
     &.storage {
         width: 360px;
+    }
+
+    &.save-load {
+        left: 50%;
+        top: 50%;
     }
 
     &.map {
@@ -744,6 +750,51 @@ button {
 
         &__time {
             color: var(--clr-subtext);
+        }
+    }
+}
+
+.save-load {
+
+    &__slot-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border-collapse: collapse;
+        gap: 1px;
+    }
+
+    &__slot {
+        --img-size: 86px;
+        display: grid;
+        grid-template-columns: 20px max-content auto 60px;
+        gap: .25em;
+        padding: .25em;
+        box-shadow:0 0 0 1px var(--clr-border);
+
+        &__index {
+            justify-self: center;
+            align-self: center;
+        }
+
+        &__image {
+            &.placeholder {
+                width: var(--img-size);
+                height: var(--img-size);
+                background-color: var(--clr-bg-t05);
+            }
+        }
+
+        img {
+            width: var(--img-size);
+            height: var(--img-size);
+            object-fit: cover;
+            filter: blur(1px);
+        }
+
+        &__btn-list {
+            display: grid;
+            gap: .25em;
+            align-items: start;
         }
     }
 }

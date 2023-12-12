@@ -1539,6 +1539,7 @@ button:active {
   background-color: var(--clr-bg-t05);
   border: 1px solid var(--clr-border);
   z-index: 1000;
+  will-change: transform;
   opacity: 0;
   animation: characterAnimation 0.3s ease forwards;
 }
@@ -1548,6 +1549,10 @@ button:active {
 }
 .game > .window.storage {
   width: 360px;
+}
+.game > .window.save-load {
+  left: 50%;
+  top: 50%;
 }
 .game > .window.map {
   display: grid;
@@ -1808,4 +1813,40 @@ button:active {
 }
 .link-list .link__time {
   color: var(--clr-subtext);
+}
+
+.save-load__slot-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-collapse: collapse;
+  gap: 1px;
+}
+.save-load__slot {
+  --img-size: 86px;
+  display: grid;
+  grid-template-columns: 20px max-content auto 60px;
+  gap: 0.25em;
+  padding: 0.25em;
+  box-shadow: 0 0 0 1px var(--clr-border);
+}
+.save-load__slot__index {
+  justify-self: center;
+  align-self: center;
+}
+.save-load__slot__image.placeholder {
+  width: var(--img-size);
+  height: var(--img-size);
+  background-color: var(--clr-bg-t05);
+}
+.save-load__slot img {
+  width: var(--img-size);
+  height: var(--img-size);
+  -o-object-fit: cover;
+     object-fit: cover;
+  filter: blur(1px);
+}
+.save-load__slot__btn-list {
+  display: grid;
+  gap: 0.25em;
+  align-items: start;
 }/*# sourceMappingURL=index.css.map */

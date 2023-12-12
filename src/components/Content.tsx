@@ -170,7 +170,7 @@ export const Content = ({
 				characters.push(CHARACTERS.sara);
 				break;
 			case "sara_home":
-				if (!storages.home.find(x => x.id === "mattress")) {
+				if (!storages.sara_home.find(x => x.id === "mattress")) {
 					actions = actions.filter(x => x != "bed");
 				}
 				if (characters.find(x => x.name == "Sara") && !isBetween(time, t(2, 0), t(7, 30))) {
